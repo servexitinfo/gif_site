@@ -1,0 +1,36 @@
+/* Checkout Page Responsive Styles */
+
+.checkout-card {
+  background-color: #FFFFFF;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid #FFE4EC;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+@media (min-width: 640px) {
+  .checkout-card {
+    padding: 2rem;
+    border-radius: 1.5rem;
+  }
+}
+
+.checkout-input {
+  width: 100%;
+  background-color: rgba(255, 240, 245, 0.5);
+  border: 1px solid #FFE4EC;
+  border-radius: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .checkout-input {
+    padding: 0.75rem;
+  }
+}
+
+.checkout-input:focus {
+  outline: none;
+  border-color: #FF5C8D;
+}

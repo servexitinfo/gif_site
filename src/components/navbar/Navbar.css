@@ -1,0 +1,188 @@
+/* Navbar Component Styles matching exact Dribbble navbar screenshot */
+.navbar-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: #FFAEBC; /* Solid pastel pink top bar */
+  border-bottom: 1px solid #FF9EA5;
+  box-shadow: 0 2px 8px rgba(255, 101, 132, 0.08);
+}
+
+.navbar-container {
+  max-width: 86rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .navbar-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.75rem;
+}
+
+@media (min-width: 768px) {
+  .navbar-content {
+    height: 4.25rem;
+  }
+}
+
+.navbar-mobile-toggle {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .navbar-mobile-toggle {
+    display: none !important;
+  }
+}
+
+/* Logo Group */
+.navbar-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.navbar-logo-mark {
+  width: 2.25rem;
+  height: 1.8rem;
+}
+
+.navbar-logo-text-stack {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.navbar-logo-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2D2F36;
+  letter-spacing: -0.01em;
+}
+
+.navbar-logo-sub {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #33363B;
+  letter-spacing: 0.02em;
+}
+
+/* Center Links */
+.navbar-nav {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav {
+    display: flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .navbar-nav {
+    gap: 3.5rem;
+  }
+}
+
+.navbar-link {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #555861;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.navbar-link:hover, .navbar-link-active {
+  color: #2D2F36;
+}
+
+/* Right Actions */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .navbar-actions {
+    gap: 1.25rem;
+  }
+}
+
+.navbar-icon-btn {
+  color: #383B42;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 200ms ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.navbar-icon-btn:hover {
+  color: #000000;
+}
+
+.navbar-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke-width: 1.75;
+}
+
+.navbar-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background-color: #FF5C8D;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 800;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-flag-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  padding: 0.25rem 0.375rem;
+  border-radius: 0.25rem;
+  transition: background-color 200ms ease;
+}
+
+.navbar-flag-selector:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbar-flag-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
+}

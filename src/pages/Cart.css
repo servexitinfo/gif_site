@@ -1,0 +1,36 @@
+/* Cart Page Responsive Styles */
+
+.cart-progress-bar {
+  padding: 0.875rem 1rem;
+  border-radius: 1rem;
+  background-color: #FFE4EC;
+  border: 1px solid #FFD6E0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .cart-progress-bar {
+    padding: 1rem;
+  }
+}
+
+.cart-table-card {
+  background-color: #FFFFFF;
+  border-radius: 1.25rem;
+  border: 1px solid #FFE4EC;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+@media (min-width: 640px) {
+  .cart-table-card {
+    border-radius: 1.5rem;
+  }
+}
+
+.cart-pink-text {
+  color: #FF5C8D;
+  font-weight: 700;
+}

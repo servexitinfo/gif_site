@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Gift Shop Vibrant Pink & Pastel Palette */
+  --color-primary: #FF5C8D;
+  --color-primary-hover: #E84393;
+  --color-primary-light: #FFE4EC;
+  --color-secondary: #FF69B4;
+  
+  --bg-main: #FFF8F9;
+  --bg-card: #FFFFFF;
+  --bg-dark: #1E1F24;
+  
+  --text-dark: #23272A;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  
+  --border-pink: #FFD6E0;
+  --border-light: #F1F5F9;
+
+  --shadow-pink: 0 10px 30px rgba(255, 92, 141, 0.2);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-card-hover: 0 12px 36px rgba(255, 92, 141, 0.15);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-heading);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF5F7;
+}
+::-webkit-scrollbar-thumb {
+  background: #FFB6C1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF5C8D;
+}
+
+/* Buttons & Badges */
+.btn-pink {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  padding: 12px 28px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-pink);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-pink:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(255, 92, 141, 0.3);
+}
+
+.btn-outline-pink {
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  padding: 10px 24px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-outline-pink:hover {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.gift-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid var(--border-pink);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gift-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-primary);
+}
+
+/* Badge Styling */
+.badge-pink {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

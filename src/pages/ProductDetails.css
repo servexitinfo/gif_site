@@ -1,0 +1,66 @@
+/* ProductDetails Page Responsive Styles */
+
+.details-hero-box {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background-color: #FFF5F7;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #FFE4EC;
+}
+
+@media (min-width: 640px) {
+  .details-hero-box {
+    aspect-ratio: 5 / 4;
+    border-radius: 1.5rem;
+  }
+}
+
+.details-swatch-ring {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 200ms ease;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .details-swatch-ring {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.details-swatch-ring:hover {
+  transform: scale(1.1);
+}
+
+.details-edition-btn {
+  padding: 0.625rem;
+  border-radius: 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 200ms ease;
+  text-align: center;
+  border: 1px solid #FFE4EC;
+  background-color: #FFFFFF;
+  color: #23272A;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .details-edition-btn {
+    padding: 0.75rem;
+    border-radius: 1rem;
+  }
+}
+
+.details-edition-btn-active {
+  background-color: #FF5C8D;
+  color: #FFFFFF;
+  border-color: #FF5C8D;
+  box-shadow: 0 4px 14px rgba(255, 92, 141, 0.3);
+}

@@ -9,7 +9,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5001',
+        target: 'https://backend-e4m8.onrender.com',
         changeOrigin: true,
         secure: false,
       }

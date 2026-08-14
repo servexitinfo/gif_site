@@ -1,18 +1,22 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-const DIRECT_API_URL = 'http://localhost:5001/api';
+const RENDER_API_URL = 'https://backend-e4m8.onrender.com/api';
+const LOCAL_API_URL = 'http://localhost:5001/api';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || RENDER_API_URL;
 
 async function fetchAPI(endpoint, options = {}) {
   try {
     const res = await fetch(`${API_BASE_URL}${endpoint}`, options);
-    if (res.status === 403) {
-      // macOS AirPlay port 5000 collision or CORS proxy fallback
-      const directRes = await fetch(`${DIRECT_API_URL}${endpoint}`, options);
-      return directRes;
+    if (!res.ok && res.status !== 400 && res.status !== 401 && res.status !== 404) {
+      throw new Error(`HTTP ${res.status}`);
     }
     return res;
-  } catch (err) {
-    const directRes = await fetch(`${DIRECT_API_URL}${endpoint}`, options);
-    return directRes;
+  } catch (primaryErr) {
+    try {
+      const localRes = await fetch(`${LOCAL_API_URL}${endpoint}`, options);
+      return localRes;
+    } catch (fallbackErr) {
+      throw primaryErr;
+    }
   }
 }
 

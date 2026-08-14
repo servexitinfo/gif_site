@@ -40,7 +40,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Center Links (HOME, PRODUCTS, ORDERS, ADMIN) */}
+          {/* Center Links (HOME, PRODUCTS, ORDERS) */}
           <nav className="navbar-nav">
             <Link to="/" className={`navbar-link ${isActive('/') ? 'navbar-link-active' : ''}`}>
               HOME
@@ -50,9 +50,6 @@ export default function Navbar() {
             </Link>
             <Link to="/orders" className={`navbar-link ${isActive('/orders') ? 'navbar-link-active' : ''}`}>
               ORDERS
-            </Link>
-            <Link to="/admin" className={`navbar-link ${isActive('/admin') ? 'navbar-link-active' : ''}`}>
-              ADMIN
             </Link>
           </nav>
 
@@ -119,13 +116,6 @@ export default function Navbar() {
             className={`block navbar-link ${isActive('/orders') ? 'text-[#FF5C8D] font-bold' : ''}`}
           >
             ORDERS
-          </Link>
-          <Link
-            to="/admin"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={`block navbar-link ${isActive('/admin') ? 'text-[#FF5C8D] font-bold' : ''}`}
-          >
-            ADMIN
           </Link>
         </div>
       )}

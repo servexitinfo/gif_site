@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FiHeart, FiShoppingBag, FiCheck, FiStar, FiChevronRight, FiGift, FiTruck, FiShield } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiHeart, FiShoppingBag, FiCheck, FiStar, FiChevronRight, FiGift, FiTruck, FiShield, FiZap } from 'react-icons/fi';
 import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
 import './ProductDetails.css';
@@ -12,6 +12,7 @@ import sofaDetail from '../assets/sofa_detail.png';
 import sofaRoom from '../assets/sofa_room.png';
 
 export default function ProductDetails() {
+  const navigate = useNavigate();
   const { addToCart, wishlist, toggleWishlist } = useCart();
 
   // Gallery State
@@ -140,10 +141,10 @@ export default function ProductDetails() {
           {/* Pricing */}
           <div className="flex items-center space-x-3 pt-1">
             <span className="text-3xl font-bold text-[#FF5C8D] font-sans">
-              ${priceInfo.current}.00
+              ₹{priceInfo.current}.00
             </span>
             <span className="text-sm text-[#94A3B8] line-through">
-              ${priceInfo.original}.00
+              ₹{priceInfo.original}.00
             </span>
             <span className="bg-[#FFE4EC] text-[#FF5C8D] text-xs font-bold px-3 py-1 rounded-full">
               Save 20% Off
@@ -194,8 +195,8 @@ export default function ProductDetails() {
           </div>
 
           {/* Quantity & Add to Cart */}
-          <div className="flex items-center gap-3 pt-4">
-            <div className="flex items-center border border-[#FFD6E0] bg-white rounded-full px-4 py-3 space-x-3 text-xs font-bold text-[#23272A]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4">
+            <div className="flex items-center justify-center border border-[#FFD6E0] bg-white rounded-full px-4 py-3 space-x-3 text-xs font-bold text-[#23272A]">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="text-[#64748B] hover:text-[#FF5C8D] px-1 font-bold"
@@ -213,10 +214,18 @@ export default function ProductDetails() {
 
             <button
               onClick={handleAddToCart}
-              className="flex-1 btn-pink py-3.5 text-xs uppercase tracking-wider"
+              className="flex-1 btn-outline-pink py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold"
             >
-              <span>Add to Gift Bag</span>
+              <span>Add to Bag</span>
               <FiShoppingBag className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => navigate(`/express-buy/${productId}`)}
+              className="flex-1 btn-pink py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold shadow-md"
+            >
+              <FiZap className="w-4 h-4" />
+              <span>Buy Now (1-Click)</span>
             </button>
           </div>
 

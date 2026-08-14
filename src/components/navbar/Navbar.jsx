@@ -40,16 +40,19 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Center Links (HOME, PRODUCT, PORTFOLIO) */}
+          {/* Center Links (HOME, PRODUCTS, ORDERS, ADMIN) */}
           <nav className="navbar-nav">
             <Link to="/" className={`navbar-link ${isActive('/') ? 'navbar-link-active' : ''}`}>
               HOME
             </Link>
             <Link to="/products" className={`navbar-link ${isActive('/products') ? 'navbar-link-active' : ''}`}>
-              PRODUCT
+              PRODUCTS
             </Link>
             <Link to="/orders" className={`navbar-link ${isActive('/orders') ? 'navbar-link-active' : ''}`}>
-              PORTFOLIO
+              ORDERS
+            </Link>
+            <Link to="/admin" className={`navbar-link ${isActive('/admin') ? 'navbar-link-active' : ''}`}>
+              ADMIN
             </Link>
           </nav>
 
@@ -96,14 +99,33 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-[#FFAEBC] px-6 py-4 space-y-3 shadow-lg">
-          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block navbar-link text-[#FF6584]">
+          <Link
+            to="/"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`block navbar-link ${isActive('/') ? 'text-[#FF5C8D] font-bold' : ''}`}
+          >
             HOME
           </Link>
-          <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block navbar-link">
-            PRODUCT
+          <Link
+            to="/products"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`block navbar-link ${isActive('/products') ? 'text-[#FF5C8D] font-bold' : ''}`}
+          >
+            PRODUCTS
           </Link>
-          <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block navbar-link">
-            PORTFOLIO
+          <Link
+            to="/orders"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`block navbar-link ${isActive('/orders') ? 'text-[#FF5C8D] font-bold' : ''}`}
+          >
+            ORDERS
+          </Link>
+          <Link
+            to="/admin"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`block navbar-link ${isActive('/admin') ? 'text-[#FF5C8D] font-bold' : ''}`}
+          >
+            ADMIN
           </Link>
         </div>
       )}

@@ -107,7 +107,7 @@ export default function Checkout() {
             </div>
             <div>
               <span className="text-xs text-[#718096]">Total Amount Paid</span>
-              <p className="text-base font-extrabold text-[#FF5C8D] mt-0.5">${placedOrder.total.toLocaleString()}.00</p>
+              <p className="text-base font-extrabold text-[#FF5C8D] mt-0.5">₹{placedOrder.total.toLocaleString()}.00</p>
             </div>
           </div>
 
@@ -121,7 +121,7 @@ export default function Checkout() {
                     <h5 className="font-bold text-[#23272A]">{item.name}</h5>
                     <span className="text-[#718096]">Qty: {item.quantity}</span>
                   </div>
-                  <span className="font-bold text-[#23272A]">${(item.price * item.quantity).toLocaleString()}.00</span>
+                  <span className="font-bold text-[#23272A]">₹{(item.price * item.quantity).toLocaleString()}.00</span>
                 </div>
               ))}
             </div>
@@ -455,7 +455,7 @@ export default function Checkout() {
                       <div>
                         <h5 className="text-xs font-bold text-[#23272A]">Instant QR Code Scan</h5>
                         <p className="text-[11px] text-[#718096] mt-1">
-                          Scan using GPay, PhonePe, Paytm, or any UPI app to make instant payment of <strong>${grandTotal.toLocaleString()}.00</strong>
+                          Scan using GPay, PhonePe, Paytm, or any UPI app to make instant payment of <strong>₹{grandTotal.toLocaleString()}.00</strong>
                         </p>
                       </div>
                     </div>
@@ -513,7 +513,7 @@ export default function Checkout() {
                     <h4 className="font-bold text-[#23272A] line-clamp-1">{item.name}</h4>
                     <span className="text-[#718096]">Qty: {item.quantity}</span>
                   </div>
-                  <span className="font-bold text-[#FF5C8D]">${(item.price * item.quantity).toLocaleString()}.00</span>
+                  <span className="font-bold text-[#FF5C8D]">₹{(item.price * item.quantity).toLocaleString()}.00</span>
                 </div>
               ))}
             </div>
@@ -521,22 +521,22 @@ export default function Checkout() {
             <div className="space-y-2 pt-4 border-t border-[#FFE4EC] text-xs">
               <div className="flex justify-between text-[#718096]">
                 <span>Items Subtotal</span>
-                <span className="font-semibold text-[#23272A]">${subtotal.toLocaleString()}.00</span>
+                <span className="font-semibold text-[#23272A]">₹{subtotal.toLocaleString()}.00</span>
               </div>
               <div className="flex justify-between text-[#718096]">
                 <span>Ribbon Packaging & Shipping</span>
                 <span className="font-semibold text-emerald-600">
-                  {shippingFee === 0 ? 'FREE Express' : `$${shippingFee}.00`}
+                  {shippingFee === 0 ? 'FREE Express' : `₹${shippingFee}.00`}
                 </span>
               </div>
               <div className="pt-2 border-t border-[#FFE4EC] flex justify-between text-base font-extrabold text-[#23272A]">
                 <span>Total Payment</span>
-                <span className="text-[#FF5C8D]">${grandTotal.toLocaleString()}.00</span>
+                <span className="text-[#FF5C8D]">₹{grandTotal.toLocaleString()}.00</span>
               </div>
             </div>
 
             <button type="submit" className="w-full hero-btn-pink py-4 text-center justify-center rounded-2xl font-bold text-sm shadow-md hover:shadow-lg transition-all">
-              Place Gift Order (${grandTotal.toLocaleString()}.00) <FiLock className="inline w-4 h-4 ml-1" />
+              Place Gift Order (₹{grandTotal.toLocaleString()}.00) <FiLock className="inline w-4 h-4 ml-1" />
             </button>
 
             <div className="flex items-center justify-center gap-2 text-[11px] text-[#718096] pt-1">

@@ -1,93 +1,19 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FiSearch, FiGrid, FiList, FiStar, FiHeart, FiShoppingBag, FiGift } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiSearch, FiGrid, FiList, FiStar, FiHeart, FiShoppingBag, FiGift, FiZap } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import './Products.css';
 
-import sofaMain from '../assets/sofa_main.png';
-import sofaSide from '../assets/sofa_side.png';
-import chairMarlow from '../assets/chair_marlow.png';
-import tableBowen from '../assets/table_bowen.png';
-import lampAlder from '../assets/lamp_alder.png';
-
 export default function Products() {
-  const { addToCart } = useCart();
+  const navigate = useNavigate();
+  const { products, addToCart, wishlist, toggleWishlist } = useCart();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid');
 
   const categories = ['All', 'Parents', 'Couple', 'Friends', 'Children', 'Colleague'];
 
-  const allProducts = [
-    {
-      id: 'gift-flower-vase',
-      name: 'Artisanal Ceramic Flower Vase',
-      category: 'Parents',
-      price: 120,
-      originalPrice: 150,
-      rating: 5.0,
-      reviews: 48,
-      image: tableBowen,
-      desc: 'Handcrafted ceramic flower vase with soft pastel rose arrangement.',
-    },
-    {
-      id: 'gift-teddy-bear',
-      name: 'Fluffy Pink Plush Teddy Bear',
-      category: 'Children',
-      price: 45,
-      originalPrice: 60,
-      rating: 4.9,
-      reviews: 92,
-      image: chairMarlow,
-      desc: 'Ultra-soft pink plush teddy bear toy with satin ribbon bow tie.',
-    },
-    {
-      id: 'gift-pen-set',
-      name: 'Luxury Fountain Pen & Cufflinks Set',
-      category: 'Colleague',
-      price: 180,
-      originalPrice: 220,
-      rating: 4.8,
-      reviews: 34,
-      image: sofaSide,
-      desc: 'Executive fountain pen & silver cufflinks in a handcrafted wooden gift presentation box.',
-    },
-    {
-      id: 'gift-custom-mug',
-      name: 'Customized Ceramic Coffee Mug',
-      category: 'Friends',
-      price: 25,
-      originalPrice: 35,
-      rating: 4.9,
-      reviews: 110,
-      image: lampAlder,
-      desc: 'Personalized ceramic coffee mug with gold foil handle and typography.',
-    },
-    {
-      id: 'gift-photo-frame',
-      name: 'Memory Wood Picture Frame Set',
-      category: 'Parents',
-      price: 65,
-      originalPrice: 85,
-      rating: 4.7,
-      reviews: 26,
-      image: sofaMain,
-      desc: 'Elegant natural wood picture frame designed for cherished family memories.',
-    },
-    {
-      id: 'gift-perfume-box',
-      name: 'Rose Gold Perfume Gift Box',
-      category: 'Couple',
-      price: 95,
-      originalPrice: 120,
-      rating: 5.0,
-      reviews: 53,
-      image: tableBowen,
-      desc: 'Luxury glass perfume bottle with pink floral notes and velvet gift box.',
-    },
-  ];
-
-  const filteredProducts = allProducts.filter((p) => {
+  const filteredProducts = products.filter((p) => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -197,17 +123,32 @@ export default function Products() {
                 <p className="text-xs text-[#64748B] mt-1.5 line-clamp-2">{p.desc}</p>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-[#FFE4EC] mt-6">
-                <div>
-                  <span className="text-lg font-bold text-[#FF5C8D]">${p.price}.00</span>
-                  <span className="text-xs text-[#94A3B8] line-through ml-2">${p.originalPrice}.00</span>
+              <div className="flex flex-col gap-2.5 pt-4 border-t border-[#FFE4EC] mt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-lg font-bold text-[#FF5C8D]">₹{p.price}.00</span>
+                    {p.originalPrice && (
+                      <span className="text-xs text-[#94A3B8] line-through ml-2">₹{p.originalPrice}.00</span>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded">In Stock</span>
                 </div>
-                <button
-                  onClick={() => addToCart({ ...p, quantity: 1, color: 'Pink', size: 'Standard' })}
-                  className="btn-pink py-2 px-4 text-xs"
-                >
-                  Add to Cart
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => addToCart({ ...p, quantity: 1, color: 'Pink', size: 'Standard' })}
+                    className="flex-1 btn-outline-pink py-2 text-xs font-bold"
+                  >
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={() => navigate(`/express-buy/${p.id}`)}
+                    className="flex-1 btn-pink py-2 text-xs font-bold flex items-center justify-center gap-1 shadow-xs"
+                  >
+                    <FiZap className="w-3.5 h-3.5" />
+                    <span>Buy Now</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -232,13 +173,22 @@ export default function Products() {
                 </div>
               </div>
               <div className="text-right flex-shrink-0 space-y-3">
-                <div className="text-xl font-bold text-[#FF5C8D]">${p.price}.00</div>
-                <button
-                  onClick={() => addToCart({ ...p, quantity: 1, color: 'Pink', size: 'Standard' })}
-                  className="btn-pink py-2.5 px-6 text-xs"
-                >
-                  Add to Cart
-                </button>
+                <div className="text-xl font-bold text-[#FF5C8D]">₹{p.price}.00</div>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => addToCart({ ...p, quantity: 1, color: 'Pink', size: 'Standard' })}
+                    className="btn-outline-pink py-2 px-5 text-xs font-bold"
+                  >
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={() => navigate(`/express-buy/${p.id}`)}
+                    className="btn-pink py-2 px-5 text-xs font-bold flex items-center justify-center gap-1 shadow-xs"
+                  >
+                    <FiZap className="w-3.5 h-3.5" />
+                    <span>Buy Now</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}

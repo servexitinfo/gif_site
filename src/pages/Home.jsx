@@ -304,9 +304,9 @@ export default function Home() {
               <div className="product-price-row">
                 <div>
                   {p.originalPrice && (
-                    <span className="product-price-original">${p.originalPrice}.00</span>
+                    <span className="product-price-original">₹{p.originalPrice}.00</span>
                   )}
-                  <span className="product-price">${p.price}.00</span>
+                  <span className="product-price">₹{p.price}.00</span>
                 </div>
                 <button
                   onClick={() => addToCart({ ...p, quantity: 1, color: 'Standard', size: 'Standard' })}

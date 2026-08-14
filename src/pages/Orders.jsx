@@ -104,7 +104,7 @@ export default function Orders() {
                     <FiClock className="w-3.5 h-3.5" /> {order.status}
                   </span>
                   <div className="text-lg font-extrabold text-[#23272A]">
-                    ${order.total.toLocaleString()}.00
+                    ₹{order.total.toLocaleString()}.00
                   </div>
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default function Orders() {
                         <h5 className="text-xs font-bold text-[#23272A] line-clamp-1">{item.name}</h5>
                         <p className="text-[11px] text-[#718096]">Qty: {item.quantity}</p>
                       </div>
-                      <span className="text-xs font-bold text-[#FF5C8D]">${(item.price * (item.quantity || 1)).toLocaleString()}.00</span>
+                      <span className="text-xs font-bold text-[#FF5C8D]">₹{(item.price * (item.quantity || 1)).toLocaleString()}.00</span>
                     </div>
                   ))}
                 </div>

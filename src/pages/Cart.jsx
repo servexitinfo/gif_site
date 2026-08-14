@@ -51,7 +51,7 @@ export default function Cart() {
                   <span className="font-bold text-[#FF5C8D]">🎉 You unlocked Free Express Gift Delivery!</span>
                 ) : (
                   <span>
-                    Add <strong className="text-[#FF5C8D]">${(shippingThreshold - subtotal).toLocaleString()}.00</strong> more for Free Delivery.
+                    Add <strong className="text-[#FF5C8D]">₹{(shippingThreshold - subtotal).toLocaleString()}.00</strong> more for Free Delivery.
                   </span>
                 )}
               </div>
@@ -65,7 +65,7 @@ export default function Cart() {
                   <div className="flex-1 space-y-1 text-center sm:text-left">
                     <h3 className="font-heading text-base font-bold text-[#23272A]">{item.name}</h3>
                     <p className="text-xs text-[#64748B]">Edition: {item.size} | Ribbon: {item.color}</p>
-                    <span className="text-xs font-bold text-[#FF5C8D]">${item.price}.00 each</span>
+                    <span className="text-xs font-bold text-[#FF5C8D]">₹{item.price}.00 each</span>
                   </div>
 
                   {/* Quantity Stepper */}
@@ -87,7 +87,7 @@ export default function Cart() {
 
                   {/* Total & Remove */}
                   <div className="flex items-center gap-4">
-                    <span className="text-base font-bold text-[#FF5C8D]">${(item.price * item.quantity).toLocaleString()}.00</span>
+                    <span className="text-base font-bold text-[#FF5C8D]">₹{(item.price * item.quantity).toLocaleString()}.00</span>
                     <button
                       onClick={() => removeFromCart(item.id)}
                       className="text-[#94A3B8] hover:text-red-500 transition-colors p-2"
@@ -110,17 +110,17 @@ export default function Cart() {
             <div className="space-y-3 text-xs text-[#64748B]">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="font-bold text-[#23272A]">${subtotal.toLocaleString()}.00</span>
+                <span className="font-bold text-[#23272A]">₹{subtotal.toLocaleString()}.00</span>
               </div>
               <div className="flex justify-between">
                 <span>Gift Wrapping & Delivery</span>
-                <span className="font-bold text-[#FF5C8D]">{isFreeShipping ? 'Free' : `$${shippingCost}.00`}</span>
+                <span className="font-bold text-[#FF5C8D]">{isFreeShipping ? 'Free' : `₹${shippingCost}.00`}</span>
               </div>
             </div>
 
             <div className="pt-4 border-t border-[#FFE4EC] flex justify-between text-base font-bold text-[#23272A]">
               <span>Total</span>
-              <span className="text-[#FF5C8D]">${grandTotal.toLocaleString()}.00</span>
+              <span className="text-[#FF5C8D]">₹{grandTotal.toLocaleString()}.00</span>
             </div>
 
             <div>

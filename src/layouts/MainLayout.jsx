@@ -70,7 +70,7 @@ export default function MainLayout({ children }) {
                           <p className="text-xs text-[#7A756D]">Size: {item.size} | Color: {item.color}</p>
                           <div className="flex items-center justify-between mt-2">
                             <span className="text-xs text-[#7A756D]">Qty: {item.quantity}</span>
-                            <span className="text-sm font-semibold text-[#1C1B1F]">${(item.price * item.quantity).toLocaleString()}</span>
+                            <span className="text-sm font-semibold text-[#1C1B1F]">₹{(item.price * item.quantity).toLocaleString()}</span>
                           </div>
                         </div>
                         <button
@@ -90,7 +90,7 @@ export default function MainLayout({ children }) {
                 <div className="pt-6 border-t border-[#EAE4DC] space-y-4">
                   <div className="flex justify-between text-sm font-medium text-[#1C1B1F]">
                     <span>Subtotal</span>
-                    <span className="font-semibold">${subtotal.toLocaleString()}</span>
+                    <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
                   </div>
                   <p className="text-[11px] text-[#7A756D]">Shipping, taxes, and discounts calculated at checkout.</p>
                   <button className="w-full bg-[#1C1B1F] text-white py-3.5 rounded-full font-medium text-xs uppercase tracking-wider hover:bg-[#333138] transition-colors shadow-sm">

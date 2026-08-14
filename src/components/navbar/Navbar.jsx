@@ -40,16 +40,13 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Center Links (HOME, PRODUCT, BLOG, PORTFOLIO) */}
+          {/* Center Links (HOME, PRODUCT, PORTFOLIO) */}
           <nav className="navbar-nav">
             <Link to="/" className={`navbar-link ${isActive('/') ? 'navbar-link-active' : ''}`}>
               HOME
             </Link>
             <Link to="/products" className={`navbar-link ${isActive('/products') ? 'navbar-link-active' : ''}`}>
               PRODUCT
-            </Link>
-            <Link to="/product/sofa-hollis-2" className={`navbar-link ${isActive('/product/sofa-hollis-2') ? 'navbar-link-active' : ''}`}>
-              BLOG
             </Link>
             <Link to="/orders" className={`navbar-link ${isActive('/orders') ? 'navbar-link-active' : ''}`}>
               PORTFOLIO
@@ -105,13 +102,9 @@ export default function Navbar() {
           <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block navbar-link">
             PRODUCT
           </Link>
-          <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="block navbar-link">
-            BLOG
-          </Link>
           <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block navbar-link">
             PORTFOLIO
           </Link>
-          {/* //test */}
         </div>
       )}
     </header>

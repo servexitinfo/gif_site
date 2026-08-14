@@ -1,22 +1,27 @@
 const RENDER_API_URL = 'https://backend-e4m8.onrender.com/api';
 const LOCAL_API_URL = 'http://localhost:5001/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || RENDER_API_URL;
+const RAW_API_URL = (import.meta.env.VITE_API_BASE_URL || RENDER_API_URL).trim();
+const API_BASE_URL = RAW_API_URL.endsWith('/') ? RAW_API_URL.slice(0, -1) : RAW_API_URL;
 
 async function fetchAPI(endpoint, options = {}) {
+  const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const primaryUrl = `${API_BASE_URL}${path}`;
+
   try {
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, options);
-    if (!res.ok && res.status !== 400 && res.status !== 401 && res.status !== 404) {
-      throw new Error(`HTTP ${res.status}`);
-    }
+    const res = await fetch(primaryUrl, options);
     return res;
   } catch (primaryErr) {
-    try {
-      const localRes = await fetch(`${LOCAL_API_URL}${endpoint}`, options);
-      return localRes;
-    } catch (fallbackErr) {
-      throw primaryErr;
+    // Try local server fallback if running locally
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      try {
+        const localRes = await fetch(`${LOCAL_API_URL}${path}`, options);
+        return localRes;
+      } catch (fallbackErr) {
+        throw primaryErr;
+      }
     }
+    throw primaryErr;
   }
 }
 

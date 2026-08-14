@@ -316,6 +316,12 @@ export const CartProvider = ({ children }) => {
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+  const getProductById = (id) => {
+    if (!id) return null;
+    const found = products.find((p) => p.id === id || p._id === id);
+    return found || null;
+  };
+
   const refreshProducts = async () => {
     const apiProducts = await apiService.getProducts();
     if (apiProducts && apiProducts.length > 0) {
@@ -334,6 +340,7 @@ export const CartProvider = ({ children }) => {
     <CartContext.Provider
       value={{
         products,
+        getProductById,
         addProduct,
         updateProduct,
         deleteProduct,

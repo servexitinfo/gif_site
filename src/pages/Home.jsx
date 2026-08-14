@@ -19,79 +19,64 @@ import tableBowen from '../assets/table_bowen.png';
 import lampAlder from '../assets/lamp_alder.png';
 
 export default function Home() {
-  const { addToCart } = useCart();
+  const { products, addToCart } = useCart();
   const [activeTab, setActiveTab] = useState('Popular');
 
-  const featuredProducts = [
+  const displayProducts = products && products.length > 0 ? products : [
     {
-      id: 'flower-vase',
-      name: 'FLOWER VASE',
-      rating: 4,
-      originalPrice: 45,
-      price: 40,
+      id: 'gift-flower-vase',
+      name: 'Artisanal Ceramic Flower Vase',
+      rating: 5,
+      originalPrice: 150,
+      price: 120,
       image: productFlowerVase,
-      hasRibbon: false,
+      isFeatured: true,
     },
     {
-      id: 'teddy-bear',
-      name: 'TEDDY BEAR',
-      rating: 4,
-      originalPrice: 46,
-      price: 32,
-      image: chairMarlow,
-      hasRibbon: true,
-    },
-    {
-      id: 'pen',
-      name: 'PEN',
+      id: 'gift-teddy-bear',
+      name: 'Fluffy Pink Plush Teddy Bear',
       rating: 5,
-      originalPrice: 90,
-      price: 75,
-      image: sofaSide,
-      hasRibbon: false,
+      originalPrice: 60,
+      price: 45,
+      image: chairMarlow,
+      isFeatured: true,
     },
     {
-      id: 'hobby-mug',
-      name: 'HOBBY MUG',
-      rating: 4,
-      price: 50,
+      id: 'gift-pen-set',
+      name: 'Luxury Fountain Pen & Cufflinks Set',
+      rating: 5,
+      originalPrice: 220,
+      price: 180,
+      image: sofaSide,
+      isFeatured: false,
+    },
+    {
+      id: 'gift-custom-mug',
+      name: 'Customized Ceramic Coffee Mug',
+      rating: 5,
+      originalPrice: 35,
+      price: 25,
       image: lampAlder,
-      hasRibbon: false,
+      isFeatured: true,
     },
     {
-      id: 'portal-mini',
-      name: 'PORTAL MINI',
-      rating: 3,
-      price: 80,
-      image: sofaMain,
-      hasRibbon: false,
-    },
-    {
-      id: 'bicycle-for-girl',
-      name: 'BICYCLE FOR GIRL',
-      rating: 4,
-      originalPrice: 145,
-      price: 130,
-      image: chairMarlow,
-      hasRibbon: false,
-    },
-    {
-      id: 'couple-ring',
-      name: 'COUPLE RING',
-      rating: 4,
-      originalPrice: 890,
-      price: 750,
-      image: tableBowen,
-      hasRibbon: true,
-    },
-    {
-      id: 'gucci-perfume-set',
-      name: 'GUCCI PERFUME SET',
+      id: 'gift-photo-frame',
+      name: 'Memory Wood Picture Frame Set',
       rating: 5,
-      price: 200,
-      image: sofaSide,
-      hasRibbon: true,
+      originalPrice: 85,
+      price: 65,
+      image: sofaMain,
+      isFeatured: false,
     },
+    {
+      id: 'gift-perfume-box',
+      name: 'Rose Gold Perfume Gift Box',
+      rating: 5,
+      originalPrice: 120,
+      price: 95,
+      image: tableBowen,
+      isFeatured: true,
+    }
   ];
 
   return (
@@ -272,29 +257,31 @@ export default function Home() {
 
         {/* 8 Product Cards + 1 View All CTA Card Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredProducts.map((p) => (
-            <div key={p.id} className="product-card">
+          {displayProducts.map((p) => (
+            <div key={p.id || p._id} className="product-card">
               <div className="relative">
                 
                 {/* Top Right Hanging Pink Ribbon Tag */}
-                {p.hasRibbon && (
+                {(p.isFeatured || p.hasRibbon) && (
                   <div className="product-ribbon-tag" title="Special Featured Gift">
-                    <span className="product-ribbon-text">SPECIAL</span>
+                    <span className="product-ribbon-text">FEATURED</span>
                   </div>
                 )}
 
-                <div className="product-image-container flex items-center justify-center p-3">
-                  <img src={p.image} alt={p.name} className="h-44 object-contain rounded-lg" />
-                </div>
+                <Link to={`/product/${p.id || p._id}`} className="block">
+                  <div className="product-image-container flex items-center justify-center p-3">
+                    <img src={p.image} alt={p.name} className="h-44 object-contain rounded-lg hover:scale-105 transition-transform" />
+                  </div>
 
-                <h3 className="product-title">{p.name}</h3>
+                  <h3 className="product-title hover:text-[#FF5C8D] transition-colors">{p.name}</h3>
+                </Link>
 
                 {/* Pink Rating Stars */}
                 <div className="product-stars">
                   {[...Array(5)].map((_, i) => (
                     <FiStar
                       key={i}
-                      className={i < p.rating ? 'fill-[#FF5C8D] text-[#FF5C8D]' : 'text-slate-300'}
+                      className={i < (p.rating || 5) ? 'fill-[#FF5C8D] text-[#FF5C8D]' : 'text-slate-300'}
                     />
                   ))}
                 </div>
@@ -309,7 +296,7 @@ export default function Home() {
                   <span className="product-price">₹{p.price}.00</span>
                 </div>
                 <button
-                  onClick={() => addToCart({ ...p, quantity: 1, color: 'Standard', size: 'Standard' })}
+                  onClick={() => addToCart({ id: p.id || p._id, name: p.name, price: p.price, image: p.image, quantity: 1, color: 'Standard', size: 'Standard' })}
                   className="product-buy-btn"
                 >
                   Buy Now

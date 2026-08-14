@@ -26,7 +26,7 @@ export default function ExpressBuy() {
   const { products, expressBuy } = useCart();
 
   // Find product by id or default to first product
-  const targetProduct = products.find((p) => p.id === id) || products[0] || {
+  const targetProduct = products.find((p) => p.id === id || p._id === id) || products[0] || {
     id: 'gift-perfume-box',
     name: 'Rose Gold Perfume Gift Box',
     category: 'Couple',

@@ -109,8 +109,12 @@ export default function Products() {
                     alt={p.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 text-[#FF5C8D] hover:bg-white shadow-md flex items-center justify-center">
-                    <FiHeart className="w-4 h-4" />
+                  <button
+                    onClick={() => toggleWishlist(p.id || p._id)}
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 text-[#FF5C8D] hover:bg-white shadow-md flex items-center justify-center transition-all hover:scale-110"
+                    title="Save to Wishlist"
+                  >
+                    <FiHeart className={`w-4 h-4 ${wishlist.includes(p.id || p._id) ? 'fill-[#FF5C8D] text-[#FF5C8D]' : ''}`} />
                   </button>
                 </div>
 

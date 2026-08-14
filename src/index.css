@@ -65,14 +65,15 @@
 
 /* Buttons & Badges */
 .btn-pink {
-  background-color: var(--color-primary);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #FF5C8D 0%, #E84393 100%) !important;
+  color: #FFFFFF !important;
   padding: 12px 28px;
   border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-pink);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px -4px rgba(255, 92, 141, 0.45);
   border: none;
   cursor: pointer;
   display: inline-flex;
@@ -82,19 +83,23 @@
 }
 
 .btn-pink:hover {
-  background-color: var(--color-primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(255, 92, 141, 0.3);
+  background: linear-gradient(135deg, #E84393 0%, #D63031 100%) !important;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 28px -4px rgba(255, 92, 141, 0.6);
+}
+
+.btn-pink:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-outline-pink {
-  background: transparent;
-  color: var(--color-primary);
-  border: 2px solid var(--color-primary);
+  background: #FFF5F7 !important;
+  color: #FF5C8D !important;
+  border: 1.5px solid #FFD6E0 !important;
   padding: 10px 24px;
   border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.875rem;
+  font-weight: 700;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
   cursor: pointer;
   display: inline-flex;
@@ -104,9 +109,11 @@
 }
 
 .btn-outline-pink:hover {
-  background-color: var(--color-primary);
-  color: #FFFFFF;
+  background: #FF5C8D !important;
+  color: #FFFFFF !important;
+  border-color: #FF5C8D !important;
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 92, 141, 0.25);
 }
 
 .gift-card {

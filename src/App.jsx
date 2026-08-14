@@ -8,6 +8,7 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Orders from './pages/Orders';
 import Admin from './pages/Admin';
 import ExpressBuy from './pages/ExpressBuy';
@@ -25,6 +26,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<Home />} />

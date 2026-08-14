@@ -40,3 +40,120 @@
   outline: none;
   border-color: #FF5C8D;
 }
+
+/* Tab Switcher Buttons */
+.auth-tab-bar {
+  display: flex;
+  background: #FFF0F4;
+  border: 1px solid #FFD6E0;
+  padding: 4px;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+}
+
+.auth-tab-active {
+  flex: 1;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #FF5C8D 0%, #E84393 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(255, 92, 141, 0.35);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.auth-tab-inactive {
+  flex: 1;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 12px;
+  color: #64748B !important;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.auth-tab-inactive:hover {
+  color: #FF5C8D !important;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Submit Button */
+.auth-submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #FF5C8D 0%, #E84393 100%) !important;
+  color: #FFFFFF !important;
+  padding: 14px 24px;
+  margin-top: 0.75rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px -2px rgba(255, 92, 141, 0.45);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #E84393 0%, #D63031 100%) !important;
+  box-shadow: 0 12px 28px -2px rgba(255, 92, 141, 0.65);
+  transform: translateY(-2px);
+}
+
+.auth-submit-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Secondary Switch Link */
+.auth-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #FF5C8D !important;
+  background-color: #FFF5F7 !important;
+  border: 1px solid #FFD6E0 !important;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(255, 92, 141, 0.06);
+}
+
+.auth-secondary-btn:hover {
+  background-color: #FF5C8D !important;
+  color: #FFFFFF !important;
+  border-color: #FF5C8D !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 92, 141, 0.25);
+}
+

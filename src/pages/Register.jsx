@@ -1,74 +1,34 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMail, FiLock, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { FiMail, FiLock, FiUser, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 import { apiService } from '../services/api';
 import sofaRoom from '../assets/sofa_room.png';
 import './Login.css';
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(() => {
-    try {
-      const saved = localStorage.getItem('gift_site_user');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const res = await apiService.loginUser(formData);
+    const res = await apiService.registerUser(formData);
     setLoading(false);
 
     if (res.success) {
-      const userData = res.data;
-      setUser(userData);
-      localStorage.setItem('gift_site_user', JSON.stringify(userData));
-      navigate('/orders');
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } else {
-      setError(res.message || 'Invalid email or password');
+      setError(res.message || 'Registration failed');
     }
   };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('gift_site_user');
-  };
-
-  if (user) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-3xl border border-[#FFE4EC] p-8 text-center space-y-5 shadow-xl">
-          <div className="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center text-[#FF5C8D] mx-auto">
-            <FiCheckCircle className="w-8 h-8" />
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-[#FF5C8D]">Signed In</span>
-            <h2 className="font-heading text-2xl font-bold text-[#23272A] mt-1">Welcome Back, {user.name}!</h2>
-            <p className="text-xs text-[#64748B] mt-1">{user.email}</p>
-          </div>
-          <div className="pt-2 flex flex-col gap-2.5 text-xs font-bold">
-            <Link to="/orders" className="btn-pink py-3 rounded-xl uppercase tracking-wider">
-              View My Orders
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="bg-slate-100 text-slate-700 hover:bg-slate-200 py-3 rounded-xl uppercase tracking-wider transition-colors"
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -76,12 +36,12 @@ export default function Login() {
         
         {/* Left Image Side Banner */}
         <div className="relative hidden md:block">
-          <img src={sofaRoom} alt="GiftCraft Member Showcase" className="w-full h-full object-cover" />
+          <img src={sofaRoom} alt="GiftCraft Showcase" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-8 flex flex-col justify-end text-white">
-            <span className="text-xs uppercase tracking-widest text-[#FF5C8D] font-bold">Member Portal</span>
-            <h3 className="font-heading text-3xl font-bold mt-1">Welcome to GiftCraft</h3>
+            <span className="text-xs uppercase tracking-widest text-[#FF5C8D] font-bold">New Member Registration</span>
+            <h3 className="font-heading text-3xl font-bold mt-1">Join GiftCraft</h3>
             <p className="text-xs opacity-90 mt-2 leading-relaxed">
-              Access your saved order history, express 1-click purchases, and custom gift notes.
+              Create an account to track your orders, save curated wishlist hampers, and receive exclusive holiday discount codes.
             </p>
           </div>
         </div>
@@ -93,25 +53,25 @@ export default function Login() {
           <div className="auth-tab-bar">
             <Link
               to="/login"
-              className="auth-tab-active"
+              className="auth-tab-inactive"
             >
               Sign In
             </Link>
             <Link
               to="/register"
-              className="auth-tab-inactive"
+              className="auth-tab-active"
             >
               Sign Up / Register
             </Link>
           </div>
 
           <div className="text-center md:text-left mb-6 space-y-1">
-            <span className="text-xs font-bold text-[#FF5C8D] uppercase tracking-wider">Account Portal</span>
+            <span className="text-xs font-bold text-[#FF5C8D] uppercase tracking-wider">Create Account</span>
             <h2 className="font-heading text-2xl font-bold text-[#23272A]">
-              Member Sign In
+              Member Registration
             </h2>
             <p className="text-xs text-[#64748B]">
-              Enter your registered email and password to log in.
+              Enter your name and details to create a new account.
             </p>
           </div>
 
@@ -121,7 +81,29 @@ export default function Login() {
             </div>
           )}
 
+          {success && (
+            <div className="bg-emerald-50 text-emerald-700 p-3.5 rounded-xl text-xs font-bold mb-4 border border-emerald-200 flex items-center gap-2">
+              <FiCheckCircle className="w-4 h-4 text-emerald-600" />
+              <span>Account created successfully! Redirecting to login...</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-[#23272A] mb-1.5 uppercase tracking-wider">Full Name</label>
+              <div className="relative">
+                <FiUser className="absolute left-3.5 top-3.5 text-[#FF5C8D]" />
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Arshad V P"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-4 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+            </div>
+
             <div>
               <label className="block text-xs font-bold text-[#23272A] mb-1.5 uppercase tracking-wider">Email Address</label>
               <div className="relative">
@@ -152,23 +134,23 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Sign In Submit Button */}
+            {/* Sign Up Submit Button */}
             <button
               type="submit"
               disabled={loading}
               className="auth-submit-btn"
             >
-              <span>{loading ? 'Signing In...' : 'Sign In Now'}</span>
+              <span>{loading ? 'Creating Account...' : 'Sign Up / Register Now'}</span>
               <FiArrowRight className="w-4 h-4" />
             </button>
           </form>
 
           <div className="mt-6 text-center border-t border-[#FFE4EC] pt-5">
             <Link
-              to="/register"
+              to="/login"
               className="auth-secondary-btn"
             >
-              <span>Don't have an account? Sign Up Here</span>
+              <span>Already have an account? Sign In Here</span>
               <FiArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

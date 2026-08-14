@@ -11,7 +11,11 @@ import {
   FiClock, 
   FiArrowLeft,
   FiLock,
-  FiChevronRight
+  FiChevronRight,
+  FiCreditCard,
+  FiSmartphone,
+  FiDollarSign,
+  FiGrid
 } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import './ExpressBuy.css';
@@ -42,7 +46,10 @@ export default function ExpressBuy() {
   // Form State for 1-Click Purchase
   const [recipientName, setRecipientName] = useState('');
   const [address, setAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('Credit Card / Apple Pay');
+  const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi' | 'card' | 'netbanking' | 'cod'
+  const [upiId, setUpiId] = useState('');
+  const [cardDetails, setCardDetails] = useState({ number: '', expiry: '', cvv: '' });
+  const [selectedBank, setSelectedBank] = useState('HDFC Bank');
   const [giftNote, setGiftNote] = useState('');
 
   // Countdown timer for conversion urgency
@@ -263,27 +270,114 @@ export default function ExpressBuy() {
               />
             </div>
 
-            {/* Payment Method Selector */}
+            {/* Payment Method Selector & Interactive Panel */}
             <div>
-              <label className="block font-bold text-[#23272A] mb-1">Payment Method</label>
-              <div className="grid grid-cols-2 gap-2.5">
+              <label className="block font-bold text-[#23272A] mb-2">Select Payment Option</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  'Credit Card / Apple Pay',
-                  'Cash on Delivery'
-                ].map((pm) => (
-                  <button
-                    key={pm}
-                    type="button"
-                    onClick={() => setPaymentMethod(pm)}
-                    className={`py-3 px-3 rounded-xl font-bold border text-center transition-all ${
-                      paymentMethod === pm
-                        ? 'bg-[#FF5C8D] text-white border-[#FF5C8D]'
-                        : 'bg-pink-50/50 text-[#23272A] border-[#FFD6E0]'
-                    }`}
-                  >
-                    {pm}
-                  </button>
-                ))}
+                  { id: 'upi', label: 'UPI / QR', icon: FiSmartphone },
+                  { id: 'card', label: 'Card', icon: FiCreditCard },
+                  { id: 'netbanking', label: 'NetBanking', icon: FiGrid },
+                  { id: 'cod', label: 'Cash / COD', icon: FiDollarSign }
+                ].map((pm) => {
+                  const Icon = pm.icon;
+                  return (
+                    <button
+                      key={pm.id}
+                      type="button"
+                      onClick={() => setPaymentMethod(pm.id)}
+                      className={`p-2.5 rounded-xl font-bold border flex flex-col items-center justify-center gap-1.5 transition-all ${
+                        paymentMethod === pm.id
+                          ? 'bg-[#FF5C8D] text-white border-[#FF5C8D] shadow-md'
+                          : 'bg-pink-50/50 text-[#23272A] border-[#FFD6E0] hover:bg-pink-50'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="text-[11px]">{pm.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Dynamic Payment Details Fields */}
+              <div className="mt-3">
+                {paymentMethod === 'upi' && (
+                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0] space-y-2.5">
+                    <p className="text-[11px] text-[#64748B]">Pay via GPay, PhonePe, Paytm, or enter UPI ID:</p>
+                    <input
+                      type="text"
+                      placeholder="e.g. username@upi or mobile@paytm"
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
+                      className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                    />
+                  </div>
+                )}
+
+                {paymentMethod === 'card' && (
+                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0] space-y-2.5">
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#23272A] mb-1">Card Number</label>
+                      <input
+                        type="text"
+                        placeholder="4532 •••• •••• 8901"
+                        maxLength="19"
+                        value={cardDetails.number}
+                        onChange={(e) => setCardDetails({ ...cardDetails, number: e.target.value })}
+                        className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#23272A] mb-1">Expiry (MM/YY)</label>
+                        <input
+                          type="text"
+                          placeholder="12/28"
+                          maxLength="5"
+                          value={cardDetails.expiry}
+                          onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
+                          className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#23272A] mb-1">CVV</label>
+                        <input
+                          type="password"
+                          placeholder="•••"
+                          maxLength="4"
+                          value={cardDetails.cvv}
+                          onChange={(e) => setCardDetails({ ...cardDetails, cvv: e.target.value })}
+                          className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {paymentMethod === 'netbanking' && (
+                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0] space-y-2">
+                    <label className="block text-[11px] font-bold text-[#23272A]">Select Bank</label>
+                    <select
+                      value={selectedBank}
+                      onChange={(e) => setSelectedBank(e.target.value)}
+                      className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                    >
+                      <option value="HDFC Bank">HDFC Bank</option>
+                      <option value="State Bank of India (SBI)">State Bank of India (SBI)</option>
+                      <option value="ICICI Bank">ICICI Bank</option>
+                      <option value="Axis Bank">Axis Bank</option>
+                      <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+                    </select>
+                  </div>
+                )}
+
+                {paymentMethod === 'cod' && (
+                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0]">
+                    <p className="text-[11px] text-[#64748B] leading-relaxed">
+                      💡 <strong>Cash on Delivery selected:</strong> Pay ₹{targetProduct.price + 50}.00 via Cash, Card, or UPI scan when the courier agent delivers the gift package.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

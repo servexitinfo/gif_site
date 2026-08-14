@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiService } from '../services/api';
 
 import sofaMain from '../assets/sofa_main.png';
 import sofaSide from '../assets/sofa_side.png';
@@ -116,6 +117,21 @@ export const CartProvider = ({ children }) => {
     }
   });
 
+  // Sync with Backend API on mount
+  useEffect(() => {
+    async function loadBackendData() {
+      const apiProducts = await apiService.getProducts();
+      if (apiProducts && apiProducts.length > 0) {
+        setProducts(apiProducts);
+      }
+      const apiOrders = await apiService.getOrders();
+      if (apiOrders) {
+        setOrders(apiOrders);
+      }
+    }
+    loadBackendData();
+  }, []);
+
   // Save products to localStorage when changed
   useEffect(() => {
     try {
@@ -157,6 +173,7 @@ export const CartProvider = ({ children }) => {
       isFeatured: newProduct.isFeatured || false
     };
     setProducts((prev) => [productToAdd, ...prev]);
+    apiService.addProduct(productToAdd);
     showToast(`Added product "${productToAdd.name}"`);
   };
 
@@ -164,11 +181,13 @@ export const CartProvider = ({ children }) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === updatedProduct.id ? { ...p, ...updatedProduct } : p))
     );
+    apiService.updateProduct(updatedProduct.id, updatedProduct);
     showToast(`Updated product "${updatedProduct.name}"`);
   };
 
   const deleteProduct = (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
+    apiService.deleteProduct(id);
     showToast('Product removed');
   };
 
@@ -196,6 +215,7 @@ export const CartProvider = ({ children }) => {
         return ord;
       })
     );
+    apiService.updateOrderStatus(orderId, newStatus);
     showToast(`Order #${orderId} status changed to ${newStatus}`);
   };
 
@@ -219,6 +239,7 @@ export const CartProvider = ({ children }) => {
     };
 
     setOrders((prev) => [newOrder, ...prev]);
+    apiService.createOrder(newOrder);
     clearCart();
     showToast(`Order #${newOrder.id} placed successfully!`);
     return newOrder;
@@ -256,6 +277,7 @@ export const CartProvider = ({ children }) => {
     };
 
     setOrders((prev) => [newOrder, ...prev]);
+    apiService.createOrder({ ...newOrder, isExpress: true });
     showToast(`Express Order #${newOrder.id} placed!`);
     return newOrder;
   };
@@ -294,6 +316,20 @@ export const CartProvider = ({ children }) => {
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+  const refreshProducts = async () => {
+    const apiProducts = await apiService.getProducts();
+    if (apiProducts && apiProducts.length > 0) {
+      setProducts(apiProducts);
+    }
+  };
+
+  const refreshOrders = async () => {
+    const apiOrders = await apiService.getOrders();
+    if (apiOrders) {
+      setOrders(apiOrders);
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -301,6 +337,7 @@ export const CartProvider = ({ children }) => {
         addProduct,
         updateProduct,
         deleteProduct,
+        refreshProducts,
         cartItems,
         addToCart,
         removeFromCart,
@@ -309,6 +346,7 @@ export const CartProvider = ({ children }) => {
         placeOrder,
         updateOrderStatus,
         expressBuy,
+        refreshOrders,
         wishlist,
         toggleWishlist,
         isCartOpen,

@@ -195,3 +195,54 @@
   border: 2px solid #FFFFFF;
   box-shadow: 0 2px 6px rgba(255, 42, 109, 0.4);
 }
+
+/* Auth Action Buttons in Navbar Header */
+.nav-btn-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #2D2F36 !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  text-decoration: none;
+  transition: all 220ms ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.nav-btn-login:hover {
+  color: #FF5C8D !important;
+  background: #FFFFFF !important;
+  border-color: #FFD6E0 !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 14px rgba(255, 92, 141, 0.18);
+}
+
+.nav-btn-register {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.38rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, #FF5C8D 0%, #E84393 100%) !important;
+  border: none !important;
+  text-decoration: none;
+  transition: all 220ms ease;
+  box-shadow: 0 4px 14px rgba(255, 92, 141, 0.35);
+}
+
+.nav-btn-register:hover {
+  background: linear-gradient(135deg, #E84393 0%, #D63031 100%) !important;
+  transform: translateY(-1.5px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(255, 92, 141, 0.5);
+}

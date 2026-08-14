@@ -53,20 +53,24 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Right Action Bar (Search, Account, Cart) */}
+          {/* Right Action Bar (Search, Sign In / Register, Cart) */}
           <div className="navbar-actions">
             {/* Search */}
             <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="navbar-icon-btn" title="Search">
               <FiSearch className="navbar-icon" />
             </button>
 
-            {/* Account */}
-            <Link to="/login" className="navbar-icon-btn" title="Account">
-              <FiUser className="navbar-icon" />
+            {/* Auth Buttons */}
+            <Link to="/login" className="nav-btn-login" title="Sign In">
+              <FiUser className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </Link>
+            <Link to="/register" className="nav-btn-register hidden sm:inline-flex" title="Register Account">
+              <span>Register</span>
             </Link>
 
             {/* Cart */}
-            <button onClick={() => setIsCartOpen(true)} className="navbar-icon-btn" title="Cart">
+            <button onClick={() => setIsCartOpen(true)} className="navbar-icon-btn ml-1" title="Cart">
               <FiShoppingBag className="navbar-icon" />
               {cartCount > 0 && <span className="navbar-badge">{cartCount}</span>}
             </button>
@@ -95,28 +99,47 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-[#FFAEBC] px-6 py-4 space-y-3 shadow-lg">
-          <Link
-            to="/"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={`block navbar-link ${isActive('/') ? 'text-[#FF5C8D] font-bold' : ''}`}
-          >
-            HOME
-          </Link>
-          <Link
-            to="/products"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={`block navbar-link ${isActive('/products') ? 'text-[#FF5C8D] font-bold' : ''}`}
-          >
-            PRODUCTS
-          </Link>
-          <Link
-            to="/orders"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={`block navbar-link ${isActive('/orders') ? 'text-[#FF5C8D] font-bold' : ''}`}
-          >
-            ORDERS
-          </Link>
+        <div className="md:hidden bg-white border-b border-[#FFAEBC] px-6 py-5 space-y-4 shadow-lg">
+          <div className="space-y-2">
+            <Link
+              to="/"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block navbar-link ${isActive('/') ? 'text-[#FF5C8D] font-bold' : ''}`}
+            >
+              HOME
+            </Link>
+            <Link
+              to="/products"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block navbar-link ${isActive('/products') ? 'text-[#FF5C8D] font-bold' : ''}`}
+            >
+              PRODUCTS
+            </Link>
+            <Link
+              to="/orders"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block navbar-link ${isActive('/orders') ? 'text-[#FF5C8D] font-bold' : ''}`}
+            >
+              ORDERS
+            </Link>
+          </div>
+
+          <div className="pt-3 border-t border-[#FFE4EC] grid grid-cols-2 gap-2.5">
+            <Link
+              to="/login"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-center py-2.5 rounded-xl text-xs font-bold text-[#FF5C8D] bg-pink-50 border border-[#FFD6E0] hover:bg-pink-100 transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/register"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-center py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#FF5C8D] to-[#E84393] shadow-sm hover:brightness-105 transition-all"
+            >
+              Register
+            </Link>
+          </div>
         </div>
       )}
     </header>

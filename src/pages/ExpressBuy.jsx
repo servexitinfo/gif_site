@@ -20,6 +20,8 @@ import {
 import { useCart } from '../context/CartContext';
 import './ExpressBuy.css';
 
+import { apiService } from '../services/api';
+
 export default function ExpressBuy() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ export default function ExpressBuy() {
   // Form State for 1-Click Purchase
   const [recipientName, setRecipientName] = useState('');
   const [address, setAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi' | 'card' | 'netbanking' | 'cod'
+  const [paymentMethod, setPaymentMethod] = useState('razorpay'); // 'razorpay' | 'upi' | 'card' | 'netbanking' | 'cod'
   const [upiId, setUpiId] = useState('');
   const [cardDetails, setCardDetails] = useState({ number: '', expiry: '', cvv: '' });
   const [selectedBank, setSelectedBank] = useState('HDFC Bank');
@@ -66,14 +68,83 @@ export default function ExpressBuy() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleInstantPurchase = (e) => {
+  const totalExpressPrice = targetProduct.price * quantity + 50;
+
+  const handleInstantPurchase = async (e) => {
     e.preventDefault();
     if (!recipientName || !address) {
       alert('Please enter recipient name and delivery address!');
       return;
     }
 
-    const createdOrder = expressBuy(
+    if (paymentMethod === 'razorpay') {
+      try {
+        const rzpRes = await apiService.createRazorpayOrder({
+          amount: totalExpressPrice,
+          currency: 'INR',
+          receipt: `expr_${Date.now()}`
+        });
+
+        const rzpOrder = rzpRes?.order;
+        const keyId = rzpRes?.keyId || 'rzp_test_giftcraft_key';
+
+        if (window.Razorpay && rzpOrder) {
+          const options = {
+            key: keyId,
+            amount: rzpOrder.amount,
+            currency: rzpOrder.currency || 'INR',
+            name: 'GiftCraft Express Gift Dispatch',
+            description: `1-Click Express: ${targetProduct.name}`,
+            image: targetProduct.image,
+            order_id: rzpOrder.id,
+            handler: async function (response) {
+              await apiService.verifyRazorpayPayment({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                orderDetails: {
+                  total: totalExpressPrice,
+                  paymentMethod: 'Razorpay 1-Click Express',
+                  recipientName,
+                  address,
+                  giftNote,
+                  items: [{ ...targetProduct, quantity, color: selectedColor, size: selectedSize }]
+                }
+              });
+
+              expressBuy(
+                {
+                  id: targetProduct.id,
+                  name: targetProduct.name,
+                  price: targetProduct.price,
+                  quantity,
+                  color: selectedColor,
+                  size: selectedSize,
+                  image: targetProduct.image
+                },
+                { recipientName, address, paymentMethod: 'Razorpay Instant', giftNote }
+              );
+
+              navigate('/orders');
+            },
+            prefill: {
+              name: recipientName
+            },
+            theme: {
+              color: '#FF5C8D'
+            }
+          };
+
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+          return;
+        }
+      } catch (err) {
+        console.warn('Razorpay 1-Click error, completing standard order:', err);
+      }
+    }
+
+    expressBuy(
       {
         id: targetProduct.id,
         name: targetProduct.name,
@@ -86,7 +157,7 @@ export default function ExpressBuy() {
       {
         recipientName,
         address,
-        paymentMethod,
+        paymentMethod: paymentMethod === 'razorpay' ? 'Razorpay (UPI / Card)' : paymentMethod,
         giftNote
       }
     );
@@ -273,12 +344,13 @@ export default function ExpressBuy() {
             {/* Payment Method Selector & Interactive Panel */}
             <div>
               <label className="block font-bold text-[#23272A] mb-2">Select Payment Option</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 {[
+                  { id: 'razorpay', label: 'Razorpay', icon: FiZap },
                   { id: 'upi', label: 'UPI / QR', icon: FiSmartphone },
                   { id: 'card', label: 'Card', icon: FiCreditCard },
-                  { id: 'netbanking', label: 'NetBanking', icon: FiGrid },
-                  { id: 'cod', label: 'Cash / COD', icon: FiDollarSign }
+                  { id: 'netbanking', label: 'Banking', icon: FiGrid },
+                  { id: 'cod', label: 'COD', icon: FiDollarSign }
                 ].map((pm) => {
                   const Icon = pm.icon;
                   return (

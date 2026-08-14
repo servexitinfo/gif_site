@@ -167,22 +167,3 @@
   align-items: center;
   justify-content: center;
 }
-
-.navbar-flag-selector {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  cursor: pointer;
-  padding: 0.25rem 0.375rem;
-  border-radius: 0.25rem;
-  transition: background-color 200ms ease;
-}
-
-.navbar-flag-selector:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.navbar-flag-emoji {
-  font-size: 1.15rem;
-  line-height: 1;
-}

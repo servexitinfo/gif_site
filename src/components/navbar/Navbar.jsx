@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FiSearch, FiUser, FiShoppingBag, FiX, FiMenu, FiChevronDown } from 'react-icons/fi';
+import { FiSearch, FiUser, FiShoppingBag, FiX, FiMenu } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 import './Navbar.css';
 
@@ -27,7 +27,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Logo (Exact Overlooked Ventures mark from screenshot) */}
+          {/* Logo */}
           <Link to="/" className="navbar-logo-group">
             <svg className="navbar-logo-mark" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M 6 26 A 18 18 0 0 1 30 10" stroke="#2D2F36" strokeWidth="4.5" strokeLinecap="round" />
@@ -35,8 +35,8 @@ export default function Navbar() {
               <polygon points="26,4 34,4 30,12" fill="#FF6584" />
             </svg>
             <div className="navbar-logo-text-stack">
-              <span className="navbar-logo-title">Overlooked</span>
-              <span className="navbar-logo-sub">Ventures</span>
+              <span className="navbar-logo-title">Gift</span>
+              <span className="navbar-logo-sub">Craft</span>
             </div>
           </Link>
 
@@ -56,7 +56,7 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Right Action Bar (Search, Account, Cart, UK Flag) */}
+          {/* Right Action Bar (Search, Account, Cart) */}
           <div className="navbar-actions">
             {/* Search */}
             <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="navbar-icon-btn" title="Search">
@@ -73,12 +73,6 @@ export default function Navbar() {
               <FiShoppingBag className="navbar-icon" />
               {cartCount > 0 && <span className="navbar-badge">{cartCount}</span>}
             </button>
-
-            {/* UK Flag Selector */}
-            <div className="navbar-flag-selector" title="Region: UK">
-              <span className="navbar-flag-emoji">🇬🇧</span>
-              <FiChevronDown className="w-3.5 h-3.5 text-[#444]" />
-            </div>
           </div>
 
         </div>

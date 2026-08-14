@@ -98,7 +98,7 @@ export default function Footer() {
         {/* Bottom Social Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[11px] text-slate-500">
-            © {new Date().getFullYear()} GiftCraft Inc. All rights reserved. Designed with <FiHeart className="inline text-[#FF5C8D] w-3 h-3 mx-0.5" /> for beloved families.
+            © {new Date().getFullYear()} Servex IT Solution Pvt Ltd. All rights reserved. Designed with <FiHeart className="inline text-[#FF5C8D] w-3 h-3 mx-0.5" /> for beloved families.
           </p>
 
           <div className="flex items-center space-x-3">

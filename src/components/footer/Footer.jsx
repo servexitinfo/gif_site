@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#1E1F24] text-white pt-16 pb-12 border-t border-[#FF5C8D]/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Value Highlights */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-12 border-b border-white/10">
           <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
@@ -44,7 +44,7 @@ export default function Footer() {
 
         {/* Main Footer Links */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 py-16">
-          
+
           {/* Brand Info */}
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-2">
@@ -88,8 +88,8 @@ export default function Footer() {
           <div className="md:col-span-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#FF5C8D] mb-4">Customer Support</h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><span className="block text-white font-semibold">Toll-Free:</span> +1 (800) 888-GIFT</li>
-              <li><span className="block text-white font-semibold">Support Email:</span> support@giftcraft.com</li>
+              <li><span className="block text-white font-semibold">Toll-Free:</span> +91 8921409500</li>
+              <li><span className="block text-white font-semibold">Support Email:</span> servexitinfo@gmail.com</li>
               <li><span className="block text-white font-semibold">Service Hours:</span> 24/7 Gift Concierge</li>
             </ul>
           </div>
@@ -102,18 +102,18 @@ export default function Footer() {
           </p>
 
           <div className="flex items-center space-x-3">
-            <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#FF5C8D] transition-all" title="X / Twitter">
+            {/* <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#FF5C8D] transition-all" title="X / Twitter">
               <FaXTwitter className="w-3.5 h-3.5" />
-            </a>
+            </a> */}
             <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#FF5C8D] transition-all" title="Instagram">
               <FaInstagram className="w-3.5 h-3.5" />
             </a>
             <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#FF5C8D] transition-all" title="Facebook">
               <FaFacebookF className="w-3.5 h-3.5" />
             </a>
-            <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#FF5C8D] transition-all" title="Pinterest">
-              <FaPinterestP className="w-3.5 h-3.5" />
-            </a>
+
+
+
           </div>
         </div>
 

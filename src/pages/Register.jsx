@@ -1,16 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMail, FiLock, FiUser, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { FiMail, FiLock, FiUser, FiPhone, FiHome, FiMapPin, FiGlobe, FiArrowRight, FiCheckCircle, FiTag } from 'react-icons/fi';
 import { apiService } from '../services/api';
 import sofaRoom from '../assets/sofa_room.png';
 import './Login.css';
 
 export default function Register() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    address: '',
+    landmark: '',
+    city: '',
+    district: '',
+    state: 'Kerala',
+    pincode: '',
+    addressType: 'Home'
+  });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const indianStates = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+    'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+    'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+    'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+    'Delhi', 'Puducherry', 'Jammu & Kashmir', 'Ladakh'
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,23 +52,23 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl w-full bg-white rounded-3xl border border-[#FFE4EC] overflow-hidden shadow-xl grid grid-cols-1 md:grid-cols-2">
+    <div className="min-h-[80vh] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl w-full bg-white rounded-3xl border border-[#FFE4EC] overflow-hidden shadow-xl grid grid-cols-1 md:grid-cols-12">
         
         {/* Left Image Side Banner */}
-        <div className="relative hidden md:block">
+        <div className="relative hidden md:block md:col-span-5">
           <img src={sofaRoom} alt="GiftCraft Showcase" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-8 flex flex-col justify-end text-white">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-8 flex flex-col justify-end text-white">
             <span className="text-xs uppercase tracking-widest text-[#FF5C8D] font-bold">New Member Registration</span>
             <h3 className="font-heading text-3xl font-bold mt-1">Join GiftCraft</h3>
             <p className="text-xs opacity-90 mt-2 leading-relaxed">
-              Create an account to track your orders, save curated wishlist hampers, and receive exclusive holiday discount codes.
+              Create an account with your complete delivery profile to track orders, save shipping details, and receive fast 1-click checkouts!
             </p>
           </div>
         </div>
 
         {/* Right Form Side */}
-        <div className="p-8 sm:p-12 flex flex-col justify-center">
+        <div className="p-6 sm:p-10 md:col-span-7 flex flex-col justify-center max-h-[85vh] overflow-y-auto">
           
           {/* Tab Switcher Bar */}
           <div className="auth-tab-bar">
@@ -65,13 +86,13 @@ export default function Register() {
             </Link>
           </div>
 
-          <div className="text-center md:text-left mb-6 space-y-1">
-            <span className="text-xs font-bold text-[#FF5C8D] uppercase tracking-wider">Create Account</span>
+          <div className="text-center md:text-left mb-5 space-y-1">
+            <span className="text-xs font-bold text-[#FF5C8D] uppercase tracking-wider">Create Account & Delivery Profile</span>
             <h2 className="font-heading text-2xl font-bold text-[#23272A]">
               Member Registration
             </h2>
             <p className="text-xs text-[#64748B]">
-              Enter your name and details to create a new account.
+              Enter your personal info and shipping address details below.
             </p>
           </div>
 
@@ -88,49 +109,185 @@ export default function Register() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
+            
+            {/* Account Credentials */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Full Name *</label>
+                <div className="relative">
+                  <FiUser className="absolute left-3 top-3 text-[#FF5C8D]" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Arshad V P"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Mobile Number *</label>
+                <div className="relative">
+                  <FiPhone className="absolute left-3 top-3 text-[#FF5C8D]" />
+                  <input
+                    type="tel"
+                    required
+                    placeholder="e.g. +91 9876543210"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Email Address *</label>
+                <div className="relative">
+                  <FiMail className="absolute left-3 top-3 text-[#FF5C8D]" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="arshad@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Password *</label>
+                <div className="relative">
+                  <FiLock className="absolute left-3 top-3 text-[#FF5C8D]" />
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Address Requirements Section Header */}
+            <div className="pt-2 border-t border-[#FFE4EC]">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF5C8D]">Elaborated Delivery Address</span>
+            </div>
+
+            {/* Flat / House No & Street Address */}
             <div>
-              <label className="block text-xs font-bold text-[#23272A] mb-1.5 uppercase tracking-wider">Full Name</label>
+              <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Flat / House No. & Building / Street *</label>
               <div className="relative">
-                <FiUser className="absolute left-3.5 top-3.5 text-[#FF5C8D]" />
+                <FiHome className="absolute left-3 top-3 text-[#FF5C8D]" />
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Arshad V P"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-4 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  placeholder="e.g. Door No. 42, Green Avenue, MG Road"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#23272A] mb-1.5 uppercase tracking-wider">Email Address</label>
-              <div className="relative">
-                <FiMail className="absolute left-3.5 top-3.5 text-[#FF5C8D]" />
-                <input
-                  type="email"
-                  required
-                  placeholder="arshad@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-4 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                />
+            {/* Landmark & Pincode */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Landmark / Area (Optional)</label>
+                <div className="relative">
+                  <FiMapPin className="absolute left-3 top-3 text-[#FF5C8D]" />
+                  <input
+                    type="text"
+                    placeholder="e.g. Near Metro Station / Town Hall"
+                    value={formData.landmark}
+                    onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Pincode / Postal Code *</label>
+                <div className="relative">
+                  <FiTag className="absolute left-3 top-3 text-[#FF5C8D]" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 682001"
+                    maxLength={6}
+                    value={formData.pincode}
+                    onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#23272A] mb-1.5 uppercase tracking-wider">Password</label>
-              <div className="relative">
-                <FiLock className="absolute left-3.5 top-3.5 text-[#FF5C8D]" />
+            {/* City, District, State */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">City / Town *</label>
                 <input
-                  type="password"
+                  type="text"
                   required
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-4 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  placeholder="e.g. Kochi"
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 px-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">District *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Ernakulam"
+                  value={formData.district}
+                  onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 px-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">State *</label>
+                <select
+                  value={formData.state}
+                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 px-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                >
+                  {indianStates.map((st) => (
+                    <option key={st} value={st}>{st}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Address Type selection */}
+            <div>
+              <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">Address Type</label>
+              <div className="flex items-center gap-3">
+                {['Home', 'Work / Office', 'Other'].map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, addressType: type })}
+                    className={`px-3 py-1.5 rounded-xl font-bold border transition-all ${
+                      formData.addressType === type
+                        ? 'bg-[#FF5C8D] text-white border-[#FF5C8D]'
+                        : 'bg-pink-50/50 text-slate-600 border-[#FFD6E0]'
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -138,14 +295,14 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="auth-submit-btn"
+              className="auth-submit-btn mt-2"
             >
-              <span>{loading ? 'Creating Account...' : 'Sign Up / Register Now'}</span>
+              <span>{loading ? 'Creating Account...' : 'Sign Up & Save Delivery Address'}</span>
               <FiArrowRight className="w-4 h-4" />
             </button>
           </form>
 
-          <div className="mt-6 text-center border-t border-[#FFE4EC] pt-5">
+          <div className="mt-4 text-center border-t border-[#FFE4EC] pt-4">
             <Link
               to="/login"
               className="auth-secondary-btn"

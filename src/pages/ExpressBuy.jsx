@@ -46,13 +46,88 @@ export default function ExpressBuy() {
   const [quantity, setQuantity] = useState(1);
 
   // Form State for 1-Click Purchase
-  const [recipientName, setRecipientName] = useState('');
-  const [address, setAddress] = useState('');
+  const [recipientName, setRecipientName] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.name || '';
+    } catch { return ''; }
+  });
+  const [phone, setPhone] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.phone || '+91 8921409500';
+    } catch { return '+91 8921409500'; }
+  });
+  const [streetAddress, setStreetAddress] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.address || '';
+    } catch { return ''; }
+  });
+  const [landmark, setLandmark] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.landmark || '';
+    } catch { return ''; }
+  });
+  const [city, setCity] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.city || '';
+    } catch { return ''; }
+  });
+  const [district, setDistrict] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.district || '';
+    } catch { return ''; }
+  });
+  const [stateName, setStateName] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.state || 'Kerala';
+    } catch { return 'Kerala'; }
+  });
+  const [pincode, setPincode] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.pincode || '';
+    } catch { return ''; }
+  });
+  const [addressType, setAddressType] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return u.addressType || 'Home';
+    } catch { return 'Home'; }
+  });
+
   const [paymentMethod, setPaymentMethod] = useState('razorpay'); // 'razorpay' | 'upi' | 'card' | 'netbanking' | 'cod'
   const [upiId, setUpiId] = useState('');
   const [cardDetails, setCardDetails] = useState({ number: '', expiry: '', cvv: '' });
   const [selectedBank, setSelectedBank] = useState('HDFC Bank');
   const [giftNote, setGiftNote] = useState('');
+
+  const indianStates = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+    'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+    'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+    'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+    'Delhi', 'Puducherry', 'Jammu & Kashmir', 'Ladakh'
+  ];
+
+  const getFullExpressAddress = () => {
+    const parts = [
+      streetAddress,
+      landmark ? `(Landmark: ${landmark})` : null,
+      city,
+      district ? `${district} Dist.` : null,
+      stateName ? `${stateName} - ${pincode}` : pincode,
+      addressType ? `[${addressType}]` : null,
+      phone ? `Ph: ${phone}` : null
+    ];
+    return parts.filter(Boolean).join(', ');
+  };
 
   // Countdown timer for conversion urgency
   const [timeLeft, setTimeLeft] = useState({ minutes: 14, seconds: 59 });
@@ -72,10 +147,12 @@ export default function ExpressBuy() {
 
   const handleInstantPurchase = async (e) => {
     e.preventDefault();
-    if (!recipientName || !address) {
-      alert('Please enter recipient name and delivery address!');
+    if (!recipientName || !streetAddress || !city || !pincode || !phone) {
+      alert('Please fill all required delivery address fields!');
       return;
     }
+
+    const fullAddr = getFullExpressAddress();
 
     if (paymentMethod === 'razorpay') {
       try {
@@ -106,7 +183,7 @@ export default function ExpressBuy() {
                   total: totalExpressPrice,
                   paymentMethod: 'Razorpay 1-Click Express',
                   recipientName,
-                  address,
+                  address: fullAddr,
                   giftNote,
                   items: [{ ...targetProduct, quantity, color: selectedColor, size: selectedSize }]
                 }
@@ -122,13 +199,14 @@ export default function ExpressBuy() {
                   size: selectedSize,
                   image: targetProduct.image
                 },
-                { recipientName, address, paymentMethod: 'Razorpay Instant', giftNote }
+                { recipientName, address: fullAddr, paymentMethod: 'Razorpay Instant', giftNote }
               );
 
               navigate('/orders');
             },
             prefill: {
-              name: recipientName
+              name: recipientName,
+              contact: phone
             },
             theme: {
               color: '#FF5C8D'
@@ -156,7 +234,7 @@ export default function ExpressBuy() {
       },
       {
         recipientName,
-        address,
+        address: fullAddr,
         paymentMethod: paymentMethod === 'razorpay' ? 'Razorpay (UPI / Card)' : paymentMethod,
         giftNote
       }
@@ -228,68 +306,6 @@ export default function ExpressBuy() {
             </div>
           </div>
 
-          {/* Ribbon & Box Edition Selectors */}
-          <div className="bg-white p-5 rounded-2xl border border-[#FFE4EC] space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-[#23272A] mb-2">Select Satin Ribbon Theme</label>
-              <div className="flex items-center gap-3">
-                {['Pink Ribbon', 'Gold Satin', 'Rose Red', 'Pastel Blue'].map((colorName) => (
-                  <button
-                    key={colorName}
-                    type="button"
-                    onClick={() => setSelectedColor(colorName)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-                      selectedColor === colorName
-                        ? 'bg-[#FF5C8D] text-white border-[#FF5C8D] shadow-sm'
-                        : 'bg-pink-50 text-[#64748B] border-[#FFD6E0]'
-                    }`}
-                  >
-                    {colorName}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[#23272A] mb-2">Box Edition</label>
-              <div className="grid grid-cols-3 gap-2">
-                {['Deluxe Box', 'Premium Box', 'Grand Hamper'].map((sz) => (
-                  <button
-                    key={sz}
-                    type="button"
-                    onClick={() => setSelectedSize(sz)}
-                    className={`py-2 px-2 rounded-xl text-xs font-bold border text-center transition-all ${
-                      selectedSize === sz
-                        ? 'bg-[#FF5C8D] text-white border-[#FF5C8D]'
-                        : 'bg-white text-[#23272A] border-[#FFE4EC]'
-                    }`}
-                  >
-                    {sz}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Guarantee Badges */}
-          <div className="grid grid-cols-3 gap-3 text-center text-[11px] text-[#64748B]">
-            <div className="bg-white p-3 rounded-xl border border-[#FFE4EC] space-y-1">
-              <FiTruck className="w-5 h-5 text-[#FF5C8D] mx-auto" />
-              <p className="font-bold text-[#23272A]">Express Shipping</p>
-              <p>24h Dispatch</p>
-            </div>
-            <div className="bg-white p-3 rounded-xl border border-[#FFE4EC] space-y-1">
-              <FiGift className="w-5 h-5 text-[#FF5C8D] mx-auto" />
-              <p className="font-bold text-[#23272A]">Free Gift Box</p>
-              <p>Artisanal Wrap</p>
-            </div>
-            <div className="bg-white p-3 rounded-xl border border-[#FFE4EC] space-y-1">
-              <FiShield className="w-5 h-5 text-[#FF5C8D] mx-auto" />
-              <p className="font-bold text-[#23272A]">Guaranteed</p>
-              <p>Damage-Free</p>
-            </div>
-          </div>
-
         </div>
 
         {/* Right Column: Integrated 1-Click Direct Purchase Checkout Form (6 Cols) */}
@@ -303,160 +319,171 @@ export default function ExpressBuy() {
 
           <form onSubmit={handleInstantPurchase} className="space-y-4 text-xs">
             
-            {/* Recipient Name */}
-            <div>
-              <label className="block font-bold text-[#23272A] mb-1">Recipient Name *</label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Sarah Connor"
-                value={recipientName}
-                onChange={(e) => setRecipientName(e.target.value)}
-                className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-4 py-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-              />
-            </div>
-
-            {/* Delivery Address */}
-            <div>
-              <label className="block font-bold text-[#23272A] mb-1">Shipping Address *</label>
-              <textarea
-                rows="2"
-                required
-                placeholder="e.g. 742 Evergreen Terrace, Springfield"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-4 py-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-              />
-            </div>
-
-            {/* Gift Message */}
-            <div>
-              <label className="block font-bold text-[#23272A] mb-1">Personalized Gift Message (Complimentary Card)</label>
-              <input
-                type="text"
-                placeholder="e.g. Happy Anniversary! With all my love."
-                value={giftNote}
-                onChange={(e) => setGiftNote(e.target.value)}
-                className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-4 py-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-              />
-            </div>
-
-            {/* Payment Method Selector & Interactive Panel */}
-            <div>
-              <label className="block font-bold text-[#23272A] mb-2">Select Payment Option</label>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                {[
-                  { id: 'razorpay', label: 'Razorpay', icon: FiZap },
-                  { id: 'upi', label: 'UPI / QR', icon: FiSmartphone },
-                  { id: 'card', label: 'Card', icon: FiCreditCard },
-                  { id: 'netbanking', label: 'Banking', icon: FiGrid },
-                  { id: 'cod', label: 'COD', icon: FiDollarSign }
-                ].map((pm) => {
-                  const Icon = pm.icon;
-                  return (
-                    <button
-                      key={pm.id}
-                      type="button"
-                      onClick={() => setPaymentMethod(pm.id)}
-                      className={`p-2.5 rounded-xl font-bold border flex flex-col items-center justify-center gap-1.5 transition-all ${
-                        paymentMethod === pm.id
-                          ? 'bg-[#FF5C8D] text-white border-[#FF5C8D] shadow-md'
-                          : 'bg-pink-50/50 text-[#23272A] border-[#FFD6E0] hover:bg-pink-50'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="text-[11px]">{pm.label}</span>
-                    </button>
-                  );
-                })}
+            {/* Recipient Name & Phone */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block font-bold text-[#23272A] mb-1">Recipient Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Sarah Connor"
+                  value={recipientName}
+                  onChange={(e) => setRecipientName(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3.5 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
               </div>
 
-              {/* Dynamic Payment Details Fields */}
-              <div className="mt-3">
-                {paymentMethod === 'upi' && (
-                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0] space-y-2.5">
-                    <p className="text-[11px] text-[#64748B]">Pay via GPay, PhonePe, Paytm, or enter UPI ID:</p>
-                    <input
-                      type="text"
-                      placeholder="e.g. username@upi or mobile@paytm"
-                      value={upiId}
-                      onChange={(e) => setUpiId(e.target.value)}
-                      className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                    />
-                  </div>
-                )}
+              <div>
+                <label className="block font-bold text-[#23272A] mb-1">Mobile Number *</label>
+                <input
+                  type="tel"
+                  required
+                  placeholder="e.g. +91 9876543210"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3.5 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+            </div>
 
-                {paymentMethod === 'card' && (
-                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0] space-y-2.5">
-                    <div>
-                      <label className="block text-[11px] font-bold text-[#23272A] mb-1">Card Number</label>
-                      <input
-                        type="text"
-                        placeholder="4532 •••• •••• 8901"
-                        maxLength="19"
-                        value={cardDetails.number}
-                        onChange={(e) => setCardDetails({ ...cardDetails, number: e.target.value })}
-                        className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[11px] font-bold text-[#23272A] mb-1">Expiry (MM/YY)</label>
-                        <input
-                          type="text"
-                          placeholder="12/28"
-                          maxLength="5"
-                          value={cardDetails.expiry}
-                          onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
-                          className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-bold text-[#23272A] mb-1">CVV</label>
-                        <input
-                          type="password"
-                          placeholder="•••"
-                          maxLength="4"
-                          value={cardDetails.cvv}
-                          onChange={(e) => setCardDetails({ ...cardDetails, cvv: e.target.value })}
-                          className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+            {/* Flat / House No & Street Address */}
+            <div>
+              <label className="block font-bold text-[#23272A] mb-1">Flat / House No. & Building / Street *</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Door No. 742, Evergreen Terrace, Main Street"
+                value={streetAddress}
+                onChange={(e) => setStreetAddress(e.target.value)}
+                className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3.5 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+              />
+            </div>
 
-                {paymentMethod === 'netbanking' && (
-                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0] space-y-2">
-                    <label className="block text-[11px] font-bold text-[#23272A]">Select Bank</label>
-                    <select
-                      value={selectedBank}
-                      onChange={(e) => setSelectedBank(e.target.value)}
-                      className="w-full bg-white border border-[#FFD6E0] rounded-xl px-3 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                    >
-                      <option value="HDFC Bank">HDFC Bank</option>
-                      <option value="State Bank of India (SBI)">State Bank of India (SBI)</option>
-                      <option value="ICICI Bank">ICICI Bank</option>
-                      <option value="Axis Bank">Axis Bank</option>
-                      <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
-                    </select>
-                  </div>
-                )}
+            {/* Landmark & Pincode */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block font-bold text-[#23272A] mb-1">Landmark / Locality (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Near City Library"
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3.5 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
 
-                {paymentMethod === 'cod' && (
-                  <div className="p-3.5 bg-pink-50/70 rounded-2xl border border-[#FFD6E0]">
-                    <p className="text-[11px] text-[#64748B] leading-relaxed">
-                      💡 <strong>Cash on Delivery selected:</strong> Pay ₹{targetProduct.price + 50}.00 via Cash, Card, or UPI scan when the courier agent delivers the gift package.
-                    </p>
+              <div>
+                <label className="block font-bold text-[#23272A] mb-1">Pincode / Postal Code *</label>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  placeholder="e.g. 682001"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3.5 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+            </div>
+
+            {/* City, District, State */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block font-bold text-[#23272A] mb-1">City / Town *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Kochi"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#23272A] mb-1">District *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Ernakulam"
+                  value={district}
+                  onChange={(e) => setDistrict(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#23272A] mb-1">State *</label>
+                <select
+                  value={stateName}
+                  onChange={(e) => setStateName(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                >
+                  {indianStates.map((st) => (
+                    <option key={st} value={st}>{st}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Address Type Tag */}
+            <div>
+              <label className="block font-bold text-[#23272A] mb-1">Address Tag</label>
+              <div className="flex gap-2">
+                {['Home', 'Work / Office', 'Other'].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setAddressType(t)}
+                    className={`px-3 py-1.5 rounded-xl font-bold border transition-all text-xs ${
+                      addressType === t
+                        ? 'bg-[#FF5C8D] text-white border-[#FF5C8D]'
+                        : 'bg-white text-slate-600 border-[#FFE4EC]'
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Gift Message (Complimentary Card - Optional) */}
+            <div>
+              <label className="block font-bold text-[#23272A] mb-1">Personalized Gift Message (Complimentary Card - Optional)</label>
+              <input
+                type="text"
+                placeholder="Optional greeting card message..."
+                value={giftNote}
+                onChange={(e) => setGiftNote(e.target.value)}
+                className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-4 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+              />
+            </div>
+
+            {/* Payment Method (Only Razorpay) */}
+            <div className="space-y-2">
+              <label className="block font-bold text-[#23272A] mb-1">Payment Method</label>
+              
+              <div className="p-4 rounded-2xl border-2 border-[#FF5C8D] bg-pink-50/70 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black text-[#3395FF]">Razorpay</span>
+                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#FF5C8D] text-white">Official Gateway</span>
                   </div>
-                )}
+                  <FiLock className="w-4 h-4 text-[#FF5C8D]" />
+                </div>
+                <p className="text-xs font-bold text-[#23272A]">
+                  Pay via Razorpay Popup (UPI / Card / NetBanking / Wallet)
+                </p>
+                <p className="text-[11px] text-[#64748B]">
+                  Supports GPay, PhonePe, Paytm, Cards, and NetBanking with 100% SSL security.
+                </p>
               </div>
             </div>
 
             {/* Order Price Breakdown */}
             <div className="bg-pink-50/70 p-4 rounded-2xl border border-[#FFE4EC] space-y-2 pt-3">
               <div className="flex justify-between text-[#64748B]">
-                <span>Product Item ({selectedSize}):</span>
+                <span>Product Item:</span>
                 <span className="font-bold text-[#23272A]">₹{targetProduct.price}.00</span>
               </div>
               <div className="flex justify-between text-[#64748B]">

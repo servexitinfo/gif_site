@@ -191,33 +191,47 @@ export const apiService = {
   // Razorpay Payment API
   async createRazorpayOrder(paymentData) {
     try {
-      const res = await fetchAPI('/payment/create-order', {
+      let res = await fetchAPI('/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(paymentData)
       });
+      if (!res.ok) {
+        res = await fetchAPI('/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(paymentData)
+        });
+      }
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to create Razorpay order');
+      if (!res.ok) throw new Error(data.error || data.message || 'Failed to create Razorpay order');
       return data;
     } catch (err) {
       console.warn('Razorpay Create Order API Warning:', err.message);
-      return { success: false, message: err.message };
+      return { success: false, error: err.message, message: err.message };
     }
   },
 
   async verifyRazorpayPayment(verificationData) {
     try {
-      const res = await fetchAPI('/payment/verify', {
+      let res = await fetchAPI('/payment/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(verificationData)
       });
+      if (!res.ok) {
+        res = await fetchAPI('/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(verificationData)
+        });
+      }
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Razorpay payment verification failed');
+      if (!res.ok) throw new Error(data.error || data.message || 'Razorpay payment verification failed');
       return data;
     } catch (err) {
       console.warn('Razorpay Verification API Warning:', err.message);
-      return { success: false, message: err.message };
+      return { success: false, error: err.message, message: err.message };
     }
   }
 };

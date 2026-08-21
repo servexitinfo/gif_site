@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FiSearch, FiUser, FiShoppingBag, FiX, FiMenu } from 'react-icons/fi';
+import { FiSearch, FiUser, FiShoppingBag, FiX, FiMenu, FiLogOut } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 import './Navbar.css';
 
@@ -8,6 +8,29 @@ export default function Navbar() {
   const { cartCount, setIsCartOpen, isSearchOpen, setIsSearchOpen } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gift_site_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('gift_site_user');
+      setUser(saved ? JSON.parse(saved) : null);
+    } catch {
+      setUser(null);
+    }
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('gift_site_user');
+    setUser(null);
+  };
 
   const isActive = (path) => location.pathname === path;
 
@@ -53,21 +76,45 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Right Action Bar (Search, Sign In / Register, Cart) */}
+          {/* Right Action Bar (Search, Auth / Profile, Cart) */}
           <div className="navbar-actions">
             {/* Search */}
             <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="navbar-icon-btn" title="Search">
               <FiSearch className="navbar-icon" />
             </button>
 
-            {/* Auth Buttons */}
-            <Link to="/login" className="nav-btn-login" title="Sign In">
-              <FiUser className="w-3.5 h-3.5" />
-              <span>Sign In</span>
-            </Link>
-            <Link to="/register" className="nav-btn-register hidden sm:inline-flex" title="Register Account">
-              <span>Register</span>
-            </Link>
+            {/* Auth Buttons: Show ONLY when user is NOT signed in */}
+            {!user ? (
+              <>
+                <Link to="/login" className="nav-btn-login" title="Sign In">
+                  <FiUser className="w-3.5 h-3.5" />
+                  <span>Sign In</span>
+                </Link>
+                <Link to="/register" className="nav-btn-register hidden sm:inline-flex" title="Register Account">
+                  <span>Register</span>
+                </Link>
+              </>
+            ) : (
+              /* Signed In User Profile & Logout */
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/orders"
+                  className="flex items-center gap-1.5 bg-pink-50 hover:bg-pink-100 px-3 py-1.5 rounded-full border border-[#FFD6E0] text-xs font-bold text-[#FF5C8D] transition-colors"
+                  title="My Account / Orders"
+                >
+                  <FiUser className="w-3.5 h-3.5" />
+                  <span className="max-w-[100px] truncate">{user.name || 'My Profile'}</span>
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-[#64748B] hover:text-[#FF5C8D] rounded-full hover:bg-pink-50 transition-colors"
+                  title="Sign Out"
+                >
+                  <FiLogOut className="w-4 h-4" />
+                </button>
+              </div>
+            )}
 
             {/* Cart */}
             <button onClick={() => setIsCartOpen(true)} className="navbar-icon-btn ml-1" title="Cart">
@@ -124,21 +171,41 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="pt-3 border-t border-[#FFE4EC] grid grid-cols-2 gap-2.5">
-            <Link
-              to="/login"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-center py-2.5 rounded-xl text-xs font-bold text-[#FF5C8D] bg-pink-50 border border-[#FFD6E0] hover:bg-pink-100 transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/register"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-center py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#FF5C8D] to-[#E84393] shadow-sm hover:brightness-105 transition-all"
-            >
-              Register
-            </Link>
+          <div className="pt-3 border-t border-[#FFE4EC]">
+            {!user ? (
+              <div className="grid grid-cols-2 gap-2.5">
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-center py-2.5 rounded-xl text-xs font-bold text-[#FF5C8D] bg-pink-50 border border-[#FFD6E0] hover:bg-pink-100 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-center py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#FF5C8D] to-[#E84393] shadow-sm hover:brightness-105 transition-all"
+                >
+                  Register
+                </Link>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between bg-pink-50 p-3 rounded-2xl border border-[#FFD6E0]">
+                <div className="flex items-center gap-2">
+                  <FiUser className="text-[#FF5C8D] w-4 h-4" />
+                  <span className="text-xs font-bold text-[#23272A]">{user.name}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-xs font-bold text-[#FF5C8D] underline"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

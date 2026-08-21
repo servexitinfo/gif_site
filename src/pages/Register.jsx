@@ -120,7 +120,7 @@ export default function Register() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Arshad V P"
+                    placeholder="e.g. John Doe"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -152,7 +152,7 @@ export default function Register() {
                   <input
                     type="email"
                     required
-                    placeholder="arshad@example.com"
+                    placeholder="user@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"

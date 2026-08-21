@@ -1,113 +1,25 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 
-import sofaMain from '../assets/sofa_main.png';
-import sofaSide from '../assets/sofa_side.png';
-import chairMarlow from '../assets/chair_marlow.png';
-import tableBowen from '../assets/table_bowen.png';
-import lampAlder from '../assets/lamp_alder.png';
-
 const CartContext = createContext();
-
-const initialProducts = [
-  {
-    id: 'gift-flower-vase',
-    name: 'Artisanal Ceramic Flower Vase',
-    category: 'Parents',
-    price: 120,
-    originalPrice: 150,
-    rating: 5.0,
-    reviews: 48,
-    stock: 15,
-    image: tableBowen,
-    desc: 'Handcrafted ceramic flower vase with soft pastel rose arrangement.',
-    isFeatured: true
-  },
-  {
-    id: 'gift-teddy-bear',
-    name: 'Fluffy Pink Plush Teddy Bear',
-    category: 'Children',
-    price: 45,
-    originalPrice: 60,
-    rating: 4.9,
-    reviews: 92,
-    stock: 25,
-    image: chairMarlow,
-    desc: 'Ultra-soft pink plush teddy bear toy with satin ribbon bow tie.',
-    isFeatured: true
-  },
-  {
-    id: 'gift-pen-set',
-    name: 'Luxury Fountain Pen & Cufflinks Set',
-    category: 'Colleague',
-    price: 180,
-    originalPrice: 220,
-    rating: 4.8,
-    reviews: 34,
-    stock: 10,
-    image: sofaSide,
-    desc: 'Executive fountain pen & silver cufflinks in a handcrafted wooden gift presentation box.',
-    isFeatured: false
-  },
-  {
-    id: 'gift-custom-mug',
-    name: 'Customized Ceramic Coffee Mug',
-    category: 'Friends',
-    price: 25,
-    originalPrice: 35,
-    rating: 4.9,
-    reviews: 110,
-    stock: 50,
-    image: lampAlder,
-    desc: 'Personalized ceramic coffee mug with gold foil handle and typography.',
-    isFeatured: true
-  },
-  {
-    id: 'gift-photo-frame',
-    name: 'Memory Wood Picture Frame Set',
-    category: 'Parents',
-    price: 65,
-    originalPrice: 85,
-    rating: 4.7,
-    reviews: 26,
-    stock: 18,
-    image: sofaMain,
-    desc: 'Elegant natural wood picture frame designed for cherished family memories.',
-    isFeatured: false
-  },
-  {
-    id: 'gift-perfume-box',
-    name: 'Rose Gold Perfume Gift Box',
-    category: 'Couple',
-    price: 95,
-    originalPrice: 120,
-    rating: 5.0,
-    reviews: 53,
-    stock: 20,
-    image: tableBowen,
-    desc: 'Luxury glass perfume bottle with pink floral notes and velvet gift box.',
-    isFeatured: true
-  }
-];
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-  const [wishlist, setWishlist] = useState(['gift-flower-vase', 'gift-perfume-box']);
+  const [wishlist, setWishlist] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Load products from localStorage or use initial list
+  // Products and Orders state initialized from backend API
   const [products, setProducts] = useState(() => {
     try {
       const saved = localStorage.getItem('gift_site_products');
-      return saved ? JSON.parse(saved) : initialProducts;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return initialProducts;
+      return [];
     }
   });
 
-  // Load orders from localStorage or set defaults
   const [orders, setOrders] = useState(() => {
     try {
       const saved = localStorage.getItem('gift_site_orders');
@@ -117,15 +29,15 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // Sync with Backend API on mount
+  // Sync strictly with Backend API on mount
   useEffect(() => {
     async function loadBackendData() {
       const apiProducts = await apiService.getProducts();
-      if (apiProducts && apiProducts.length > 0) {
+      if (Array.isArray(apiProducts)) {
         setProducts(apiProducts);
       }
       const apiOrders = await apiService.getOrders();
-      if (apiOrders) {
+      if (Array.isArray(apiOrders)) {
         setOrders(apiOrders);
       }
     }
@@ -169,7 +81,7 @@ export const CartProvider = ({ children }) => {
       price: Number(newProduct.price),
       originalPrice: Number(newProduct.originalPrice || newProduct.price * 1.2),
       stock: Number(newProduct.stock || 10),
-      image: newProduct.image || tableBowen,
+      image: newProduct.image || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800',
       isFeatured: newProduct.isFeatured || false
     };
     setProducts((prev) => [productToAdd, ...prev]);
@@ -192,13 +104,13 @@ export const CartProvider = ({ children }) => {
   };
 
   // Order Management Methods (Admin)
-  const updateOrderStatus = (orderId, newStatus) => {
+  const updateOrderStatus = (orderId, newStatus, trackingInfo = {}) => {
     setOrders((prev) =>
       prev.map((ord) => {
         if (ord.id === orderId) {
-          const updatedSteps = ord.steps ? ord.steps.map((step) => {
-            if (newStatus === 'Shipped' && step.label.includes('Shipped')) {
-              return { ...step, date: 'Dispatched', completed: true };
+          const updatedSteps = ord.steps ? ord.steps.map((step, idx) => {
+            if (newStatus === 'Shipped') {
+              if (idx <= 2) return { ...step, date: 'Dispatched', completed: true };
             }
             if (newStatus === 'Delivered') {
               return { ...step, completed: true, date: 'Delivered' };
@@ -209,14 +121,16 @@ export const CartProvider = ({ children }) => {
           return {
             ...ord,
             status: newStatus,
+            trackingNumber: trackingInfo.trackingNumber !== undefined ? trackingInfo.trackingNumber : (ord.trackingNumber || ''),
+            courierPartner: trackingInfo.courierPartner !== undefined ? trackingInfo.courierPartner : (ord.courierPartner || ''),
             steps: updatedSteps.length ? updatedSteps : ord.steps
           };
         }
         return ord;
       })
     );
-    apiService.updateOrderStatus(orderId, newStatus);
-    showToast(`Order #${orderId} status changed to ${newStatus}`);
+    apiService.updateOrderStatus(orderId, newStatus, trackingInfo);
+    showToast(`Order #${orderId} updated to ${newStatus}`);
   };
 
   const placeOrder = (orderData) => {

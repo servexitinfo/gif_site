@@ -162,13 +162,14 @@ export default function ExpressBuy() {
           receipt: `expr_${Date.now()}`
         });
 
-        const rzpOrder = rzpRes?.order;
-        const keyId = rzpRes?.keyId || 'rzp_test_giftcraft_key';
+        const rzpOrder = rzpRes?.order || (rzpRes?.id ? rzpRes : null);
+        const orderId = rzpOrder?.id || rzpOrder?.order_id || rzpRes?.order_id;
+        const keyId = rzpRes?.key_id || rzpRes?.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TQTdFzIaKiY36u';
 
-        if (window.Razorpay && rzpOrder) {
+        if (window.Razorpay && orderId) {
           const options = {
             key: keyId,
-            amount: rzpOrder.amount,
+            amount: rzpOrder?.amount || (totalExpressPrice * 100),
             currency: rzpOrder.currency || 'INR',
             name: 'GiftCraft Express Gift Dispatch',
             description: `1-Click Express: ${targetProduct.name}`,

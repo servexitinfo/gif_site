@@ -9,44 +9,7 @@ import './Orders.css';
 export default function Orders() {
   const { orders } = useCart();
 
-  const defaultOrders = [
-    {
-      id: 'GIFT-948201',
-      date: '12 Aug 2026',
-      total: 120,
-      status: 'In Transit',
-      paymentMethod: 'Credit / Debit Card',
-      recipientName: 'Arshad V P',
-      items: [
-        { name: 'Beloved Family Gift Box', price: 120, image: catCouple, quantity: 1 }
-      ],
-      steps: [
-        { label: 'Order Placed', date: '12 Aug', completed: true },
-        { label: 'Artisanal Gift Ribbon', date: '12 Aug', completed: true },
-        { label: 'Shipped (Express)', date: '13 Aug', completed: true },
-        { label: 'Delivered', date: 'Estimated 15 Aug', completed: false }
-      ]
-    },
-    {
-      id: 'GIFT-883012',
-      date: '28 Jul 2026',
-      total: 75,
-      status: 'Delivered',
-      paymentMethod: 'UPI / QR Mobile Pay',
-      recipientName: 'Arshad V P',
-      items: [
-        { name: 'Parents Celebration Box', price: 75, image: catParents, quantity: 1 }
-      ],
-      steps: [
-        { label: 'Order Placed', date: '28 Jul', completed: true },
-        { label: 'Artisanal Gift Ribbon', date: '29 Jul', completed: true },
-        { label: 'Shipped', date: '30 Jul', completed: true },
-        { label: 'Delivered', date: '01 Aug', completed: true }
-      ]
-    }
-  ];
-
-  const allOrders = orders && orders.length > 0 ? [...orders, ...defaultOrders] : defaultOrders;
+  const allOrders = orders || [];
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">

@@ -27,9 +27,9 @@ export default function Checkout() {
     try {
       const savedUser = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
       return {
-        firstName: savedUser.name ? savedUser.name.split(' ')[0] : 'Arshad',
-        lastName: savedUser.name ? savedUser.name.split(' ').slice(1).join(' ') || 'V P' : 'V P',
-        email: savedUser.email || 'arshad@example.com',
+        firstName: savedUser.name ? savedUser.name.split(' ')[0] : 'User',
+        lastName: savedUser.name ? savedUser.name.split(' ').slice(1).join(' ') || 'Customer' : 'Customer',
+        email: savedUser.email || 'user@example.com',
         phone: savedUser.phone || '+91 8921409500',
         altPhone: '',
         address: savedUser.address || 'Door No. 42, Celebration Avenue, MG Road',
@@ -40,16 +40,16 @@ export default function Checkout() {
         postalCode: savedUser.pincode || '682001',
         addressType: savedUser.addressType || 'Home',
         giftNote: '',
-        upiId: 'arshad@upi',
+        upiId: 'user@upi',
         cardNumber: '4242 •••• •••• 4242',
         cardExpiry: '12/28',
         cardCvc: '888'
       };
     } catch {
       return {
-        firstName: 'Arshad',
-        lastName: 'V P',
-        email: 'arshad@example.com',
+        firstName: 'User',
+        lastName: 'Customer',
+        email: 'user@example.com',
         phone: '+91 8921409500',
         altPhone: '',
         address: 'Door No. 42, Celebration Avenue, MG Road',
@@ -60,7 +60,7 @@ export default function Checkout() {
         postalCode: '682001',
         addressType: 'Home',
         giftNote: '',
-        upiId: 'arshad@upi',
+        upiId: 'user@upi',
         cardNumber: '4242 •••• •••• 4242',
         cardExpiry: '12/28',
         cardCvc: '888'
@@ -136,11 +136,11 @@ export default function Checkout() {
           receipt: `rcpt_${Date.now()}`
         });
 
-        const rzpOrder = rzpRes?.order || rzpRes;
-        const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || rzpRes?.key_id || rzpRes?.keyId || 'rzp_test_TPiTFbeYfn1lq5';
+        const rzpOrder = rzpRes?.order || (rzpRes?.id ? rzpRes : null);
+        const orderId = rzpOrder?.id || rzpOrder?.order_id || rzpRes?.order_id;
+        const keyId = rzpRes?.key_id || rzpRes?.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TQTdFzIaKiY36u';
 
-        if (window.Razorpay && (rzpOrder?.id || rzpOrder?.order_id)) {
-          const orderId = rzpOrder.id || rzpOrder.order_id;
+        if (window.Razorpay && orderId) {
           const options = {
             key: keyId,
             amount: rzpOrder.amount,

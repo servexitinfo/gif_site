@@ -141,12 +141,16 @@ export const apiService = {
     }
   },
 
-  async updateOrderStatus(id, status) {
+  async updateOrderStatus(id, status, trackingInfo = {}) {
     try {
       const res = await fetchAPI(`/orders/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({
+          status,
+          courierPartner: trackingInfo.courierPartner,
+          trackingNumber: trackingInfo.trackingNumber
+        })
       });
       if (!res.ok) throw new Error('Failed to update status');
       const data = await res.json();

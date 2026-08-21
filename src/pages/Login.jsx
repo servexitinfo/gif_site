@@ -129,7 +129,7 @@ export default function Login() {
                 <input
                   type="email"
                   required
-                  placeholder="arshad@example.com"
+                  placeholder="user@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-4 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"

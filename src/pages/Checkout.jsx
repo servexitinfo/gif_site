@@ -22,48 +22,48 @@ export default function Checkout() {
   const [placedOrder, setPlacedOrder] = useState(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  // Form State
+  // Form State for Logged in Users or Guest Users
   const [formData, setFormData] = useState(() => {
     try {
       const savedUser = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
       return {
-        firstName: savedUser.name ? savedUser.name.split(' ')[0] : 'User',
-        lastName: savedUser.name ? savedUser.name.split(' ').slice(1).join(' ') || 'Customer' : 'Customer',
-        email: savedUser.email || 'user@example.com',
-        phone: savedUser.phone || '+91 8921409500',
+        firstName: savedUser.name ? savedUser.name.split(' ')[0] : '',
+        lastName: savedUser.name ? savedUser.name.split(' ').slice(1).join(' ') || '' : '',
+        email: savedUser.email || '',
+        phone: savedUser.phone || '',
         altPhone: '',
-        address: savedUser.address || 'Door No. 42, Celebration Avenue, MG Road',
-        landmark: savedUser.landmark || 'Near Central Metro Station',
-        city: savedUser.city || 'Kochi',
-        district: savedUser.district || 'Ernakulam',
+        address: savedUser.address || '',
+        landmark: savedUser.landmark || '',
+        city: savedUser.city || '',
+        district: savedUser.district || '',
         state: savedUser.state || 'Kerala',
-        postalCode: savedUser.pincode || '682001',
+        postalCode: savedUser.pincode || '',
         addressType: savedUser.addressType || 'Home',
         giftNote: '',
-        upiId: 'user@upi',
-        cardNumber: '4242 •••• •••• 4242',
-        cardExpiry: '12/28',
-        cardCvc: '888'
+        upiId: '',
+        cardNumber: '',
+        cardExpiry: '',
+        cardCvc: ''
       };
     } catch {
       return {
-        firstName: 'User',
-        lastName: 'Customer',
-        email: 'user@example.com',
-        phone: '+91 8921409500',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
         altPhone: '',
-        address: 'Door No. 42, Celebration Avenue, MG Road',
-        landmark: 'Near Central Metro Station',
-        city: 'Kochi',
-        district: 'Ernakulam',
+        address: '',
+        landmark: '',
+        city: '',
+        district: '',
         state: 'Kerala',
-        postalCode: '682001',
+        postalCode: '',
         addressType: 'Home',
         giftNote: '',
-        upiId: 'user@upi',
-        cardNumber: '4242 •••• •••• 4242',
-        cardExpiry: '12/28',
-        cardCvc: '888'
+        upiId: '',
+        cardNumber: '',
+        cardExpiry: '',
+        cardCvc: ''
       };
     }
   });

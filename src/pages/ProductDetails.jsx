@@ -262,18 +262,18 @@ export default function ProductDetails() {
 
             <button
               onClick={handleAddToCart}
-              className="flex-1 btn-outline-pink py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold"
+              className="flex-1 min-w-[120px] btn-outline-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold whitespace-nowrap cursor-pointer"
             >
               <span>Add to Bag</span>
-              <FiShoppingBag className="w-4 h-4" />
+              <FiShoppingBag className="w-4 h-4 flex-shrink-0" />
             </button>
 
             <button
               onClick={() => navigate(`/express-buy/${productId}`)}
-              className="flex-1 btn-pink py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold shadow-md"
+              className="flex-1 min-w-[140px] btn-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold shadow-md whitespace-nowrap cursor-pointer"
             >
-              <FiZap className="w-4 h-4" />
-              <span>Buy Now (1-Click)</span>
+              <FiZap className="w-4 h-4 flex-shrink-0" />
+              <span>1-Click Express Buy</span>
             </button>
           </div>
 

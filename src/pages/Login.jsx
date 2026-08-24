@@ -39,7 +39,7 @@ export default function Login() {
       if (userData.role === 'admin' || (userData.email && userData.email.toLowerCase().includes('admin'))) {
         navigate('/admin');
       } else {
-        navigate('/orders');
+        navigate('/');
       }
     } else {
       setError(res.message || 'Invalid email or password');

@@ -55,8 +55,8 @@ export default function ExpressBuy() {
   const [phone, setPhone] = useState(() => {
     try {
       const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
-      return u.phone || '+91 8921409500';
-    } catch { return '+91 8921409500'; }
+      return u.phone || '';
+    } catch { return ''; }
   });
   const [streetAddress, setStreetAddress] = useState(() => {
     try {

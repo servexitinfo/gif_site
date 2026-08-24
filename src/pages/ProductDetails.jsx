@@ -122,20 +122,20 @@ export default function ProductDetails() {
         
         {/* Left Gallery (7 Cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="relative aspect-4/3 sm:aspect-5/4 bg-pink-50 rounded-3xl overflow-hidden shadow-lg border border-[#FFE4EC] group">
+          <div className="relative aspect-4/3 sm:aspect-5/4 bg-pink-50/60 rounded-3xl overflow-hidden shadow-lg border border-[#FFE4EC] group flex items-center justify-center p-3">
             <img
               src={images[selectedImage]}
               alt={product.name}
-              className="w-full h-full object-cover object-center transition-all duration-500 transform group-hover:scale-105"
+              className="w-full h-full object-contain object-center transition-all duration-500 transform group-hover:scale-105"
             />
             
-            <span className="absolute top-5 left-5 bg-[#FF5C8D] text-white text-[11px] font-bold tracking-wider px-3.5 py-1.5 rounded-full shadow-md uppercase">
+            <span className="absolute top-5 left-5 bg-[#FF5C8D] text-white text-[11px] font-bold tracking-wider px-3.5 py-1.5 rounded-full shadow-md uppercase z-10">
               {product.category || 'Special Gift'} Edition
             </span>
 
             <button
               onClick={() => toggleWishlist(productId)}
-              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#FF5C8D] hover:bg-white transition-all hover:scale-110"
+              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#FF5C8D] hover:bg-white transition-all hover:scale-110 z-10"
               title="Save to Wishlist"
             >
               <FiHeart className={`w-5 h-5 ${isWishlisted ? 'fill-[#FF5C8D] text-[#FF5C8D]' : ''}`} />
@@ -148,13 +148,13 @@ export default function ProductDetails() {
               <button
                 key={idx}
                 onClick={() => setSelectedImage(idx)}
-                className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all bg-pink-50 ${
+                className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all bg-pink-50/60 flex items-center justify-center p-1.5 ${
                   selectedImage === idx
                     ? 'border-[#FF5C8D] ring-2 ring-[#FF5C8D]/20 scale-95'
                     : 'border-transparent hover:border-[#FFD6E0]'
                 }`}
               >
-                <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
               </button>
             ))}
           </div>

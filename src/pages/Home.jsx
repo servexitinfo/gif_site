@@ -214,8 +214,14 @@ export default function Home() {
                   )}
 
                   <Link to={`/product/${p.id || p._id}`} className="block">
-                    <div className="product-image-container flex items-center justify-center p-3">
-                      <img src={p.image} alt={p.name} className="h-44 object-contain rounded-lg hover:scale-105 transition-transform" />
+                    <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-pink-50 mb-3 relative">
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     </div>
 
                     <h3 className="product-title hover:text-[#FF5C8D] transition-colors">{p.name}</h3>

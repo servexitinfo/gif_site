@@ -67,6 +67,10 @@ export default function Admin() {
     setAuthError(null);
     setIsAuthenticating(true);
 
+    const normEmail = adminEmail.trim().toLowerCase();
+    const normPass = adminPassword.trim();
+    const isArshadAdmin = (normEmail === 'arshad1071' || normEmail === 'arshad1071@gmail.com' || normEmail === 'admin@giftcraft.com') && (normPass === 'Test@123' || normPass === 'admin123' || normPass === 'admin');
+
     try {
       const res = await apiService.loginUser({ email: adminEmail, password: adminPassword });
       setIsAuthenticating(false);
@@ -75,8 +79,8 @@ export default function Admin() {
         const adminUser = { ...(res.data || {}), role: 'admin' };
         localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
         setCurrentUser(adminUser);
-      } else if (adminEmail.trim().toLowerCase() === 'admin@giftcraft.com' && (adminPassword === 'admin123' || adminPassword === 'admin')) {
-        const adminUser = { id: 'admin-1', name: 'Store Administrator', email: 'admin@giftcraft.com', role: 'admin' };
+      } else if (isArshadAdmin) {
+        const adminUser = { id: 'admin-arshad-1', name: 'Arshad (Store Admin)', email: 'arshad1071@gmail.com', role: 'admin' };
         localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
         setCurrentUser(adminUser);
       } else {
@@ -84,8 +88,8 @@ export default function Admin() {
       }
     } catch (err) {
       setIsAuthenticating(false);
-      if (adminEmail.trim().toLowerCase() === 'admin@giftcraft.com' && (adminPassword === 'admin123' || adminPassword === 'admin')) {
-        const adminUser = { id: 'admin-1', name: 'Store Administrator', email: 'admin@giftcraft.com', role: 'admin' };
+      if (isArshadAdmin) {
+        const adminUser = { id: 'admin-arshad-1', name: 'Arshad (Store Admin)', email: 'arshad1071@gmail.com', role: 'admin' };
         localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
         setCurrentUser(adminUser);
       } else {
@@ -223,6 +227,23 @@ export default function Admin() {
       };
     });
     setUrlInput('');
+  };
+
+  const handleSetCoverImage = (indexToMakeCover) => {
+    setFormData((prev) => {
+      const currentImages = prev.images || (prev.image ? [prev.image] : []);
+      if (indexToMakeCover <= 0 || indexToMakeCover >= currentImages.length) return prev;
+      
+      const targetImg = currentImages[indexToMakeCover];
+      const remaining = currentImages.filter((_, idx) => idx !== indexToMakeCover);
+      const reordered = [targetImg, ...remaining];
+
+      return {
+        ...prev,
+        images: reordered,
+        image: targetImg
+      };
+    });
   };
 
   const handleRemoveImage = (indexToRemove) => {
@@ -1117,18 +1138,28 @@ export default function Admin() {
                       <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border-2 border-[#FFD6E0] bg-white group shadow-xs">
                         <img src={imgSrc} alt={`Product Photo ${idx + 1}`} className="w-full h-full object-cover" />
                         {idx === 0 && (
-                          <span className="absolute top-1 left-1 bg-[#FF5C8D] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider">
-                            Cover
+                          <span className="absolute top-1 left-1 bg-[#FF5C8D] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider shadow-xs">
+                            ★ Cover
                           </span>
                         )}
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 p-1">
+                          {idx > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetCoverImage(idx)}
+                              className="bg-[#FF5C8D] hover:bg-[#e04b79] text-white px-2 py-1 rounded-md text-[10px] font-bold transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                              title="Set as Main Cover Photo"
+                            >
+                              ★ Set Cover
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() => handleRemoveImage(idx)}
-                            className="bg-rose-600 hover:bg-rose-700 text-white p-1.5 rounded-lg text-xs font-bold transition-transform transform hover:scale-110 cursor-pointer"
+                            className="bg-rose-600 hover:bg-rose-700 text-white p-1 rounded-md text-xs font-bold transition-all cursor-pointer shadow-xs"
                             title="Remove this photo"
                           >
-                            <FiTrash2 className="w-4 h-4" />
+                            <FiTrash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>

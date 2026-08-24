@@ -107,6 +107,8 @@ export default function Products() {
                   <img
                     src={p.image}
                     alt={p.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <button
@@ -162,7 +164,13 @@ export default function Products() {
           {filteredProducts.map((p) => (
             <div key={p.id} className="gift-card p-6 flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-56 aspect-4/3 rounded-2xl overflow-hidden bg-pink-50 flex-shrink-0">
-                <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex-1 space-y-2">
                 <span className="text-[10px] font-bold text-[#FF5C8D] uppercase tracking-widest">{p.category}</span>

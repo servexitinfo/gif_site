@@ -169,7 +169,7 @@ export default function ExpressBuy() {
 
         const rzpOrder = rzpRes.order || rzpRes;
         const orderId = rzpOrder.id || rzpOrder.order_id || rzpRes.order_id;
-        const keyId = rzpRes.key_id || rzpRes.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID;
+        const keyId = rzpRes.key_id || rzpRes.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TTV4xw1KBt6Ssv';
 
         if (window.Razorpay && orderId) {
           const options = {

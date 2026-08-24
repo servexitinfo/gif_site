@@ -35,7 +35,7 @@ export default function MainLayout({ children }) {
       {isCartOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
             onClick={() => setIsCartOpen(false)}
           />
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">

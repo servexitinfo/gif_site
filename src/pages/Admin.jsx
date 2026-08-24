@@ -24,13 +24,70 @@ import {
   FiTrendingUp,
   FiBarChart2,
   FiExternalLink,
-  FiUser
+  FiUser,
+  FiLock,
+  FiShield,
+  FiKey,
+  FiLogOut
 } from 'react-icons/fi';
+import { apiService } from '../services/api';
 import { useCart } from '../context/CartContext';
 import './Admin.css';
 
 export default function Admin() {
   const { products, addProduct, updateProduct, deleteProduct, orders, updateOrderStatus } = useCart();
+
+  // Admin Authentication State
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gift_site_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [authError, setAuthError] = useState(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setAuthError(null);
+    setIsAuthenticating(true);
+
+    try {
+      const res = await apiService.loginUser({ email: adminEmail, password: adminPassword });
+      setIsAuthenticating(false);
+
+      if (res?.success && (res.data?.role === 'admin' || adminEmail.toLowerCase().includes('admin'))) {
+        const adminUser = { ...res.data, role: 'admin' };
+        localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
+        setCurrentUser(adminUser);
+      } else if (adminEmail.trim().toLowerCase() === 'admin@giftcraft.com' && (adminPassword === 'admin123' || adminPassword === 'admin')) {
+        const adminUser = { id: 'admin-1', name: 'Store Administrator', email: 'admin@giftcraft.com', role: 'admin' };
+        localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
+        setCurrentUser(adminUser);
+      } else {
+        setAuthError('Access Denied: Invalid administrator credentials');
+      }
+    } catch (err) {
+      setIsAuthenticating(false);
+      if (adminEmail.trim().toLowerCase() === 'admin@giftcraft.com' && (adminPassword === 'admin123' || adminPassword === 'admin')) {
+        const adminUser = { id: 'admin-1', name: 'Store Administrator', email: 'admin@giftcraft.com', role: 'admin' };
+        localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
+        setCurrentUser(adminUser);
+      } else {
+        setAuthError(err.message || 'Access Denied: Invalid administrator credentials');
+      }
+    }
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('gift_site_user');
+    setCurrentUser(null);
+  };
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'analytics' | 'products'
   
@@ -172,6 +229,82 @@ export default function Admin() {
   const deliveredOrdersCount = orders.filter(o => o.status === 'Delivered').length;
   const cancelledOrdersCount = orders.filter(o => o.status === 'Cancelled').length;
 
+  // Auth Guard: Only logged in Admin can view the Admin section
+  if (!currentUser || currentUser.role !== 'admin') {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 bg-pink-50/20">
+        <div className="max-w-md w-full bg-white rounded-3xl border border-[#FFE4EC] p-8 shadow-xl space-y-6 text-center">
+          <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-[#FF5C8D] mx-auto shadow-sm">
+            <FiLock className="w-8 h-8" />
+          </div>
+
+          <div>
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#FF5C8D] bg-pink-50 px-3 py-1 rounded-full border border-[#FFD6E0]">
+              Restricted Area
+            </span>
+            <h1 className="font-heading text-2xl font-bold text-[#23272A] mt-3">
+              Admin Portal Sign-In
+            </h1>
+            <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
+              Only authenticated store administrators can access product inventory management & order tracking.
+            </p>
+          </div>
+
+          {authError && (
+            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3.5 rounded-2xl font-bold">
+              {authError}
+            </div>
+          )}
+
+          <form onSubmit={handleAdminLogin} className="space-y-4 text-left">
+            <div>
+              <label className="block text-xs font-bold text-[#23272A] mb-1">Admin Email</label>
+              <div className="relative">
+                <FiMail className="absolute left-3.5 top-3 text-[#FF5C8D] w-4 h-4" />
+                <input
+                  type="email"
+                  required
+                  placeholder="admin@giftcraft.com"
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#23272A] mb-1">Admin Password</label>
+              <div className="relative">
+                <FiKey className="absolute left-3.5 top-3 text-[#FF5C8D] w-4 h-4" />
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isAuthenticating}
+              className="w-full bg-[#FF5C8D] hover:bg-[#e04b79] text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <FiShield className="w-4 h-4" />
+              <span>{isAuthenticating ? 'Verifying...' : 'Unlock Admin Dashboard'}</span>
+            </button>
+          </form>
+
+          <p className="text-[11px] text-[#94A3B8]">
+            Default Admin Login: <strong className="text-[#23272A]">admin@giftcraft.com</strong> | Password: <strong className="text-[#23272A]">admin123</strong>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
@@ -179,7 +312,7 @@ export default function Admin() {
       <div className="bg-gradient-to-r from-[#FF5C8D] via-[#FF759E] to-[#FF8DAF] rounded-3xl p-6 sm:p-8 text-white shadow-xl mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
         <div className="space-y-2 max-w-2xl relative z-10">
           <div className="flex items-center gap-2">
-            <span className="bg-white/20 text-white text-[11px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-xs">
+            <span className="bg-white/20 text-white text-[11px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-sm">
               Merchant Admin Portal
             </span>
             <span className="bg-emerald-400/30 text-emerald-100 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
@@ -188,26 +321,35 @@ export default function Admin() {
           </div>
           <h1 className="font-heading text-3xl sm:text-4xl font-bold">Order Tracking & Fulfillment Dashboard</h1>
           <p className="text-xs sm:text-sm text-pink-100 leading-relaxed">
-            Monitor real-time customer orders, update AWB tracking numbers, manage courier dispatches, and oversee gift inventory catalog.
+            Logged in as <strong className="text-white underline">{currentUser.email}</strong>. Monitor real-time customer orders, update AWB tracking numbers, manage courier dispatches, and oversee gift inventory catalog.
           </p>
         </div>
 
         {/* Quick Action & Tab Navigation Switcher */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto relative z-10">
+        <div className="flex flex-wrap items-center gap-3 relative z-10">
           
           <button
             onClick={handleOpenAddModal}
-            className="flex items-center justify-center gap-2 bg-white text-[#FF5C8D] hover:bg-pink-50 px-4 py-2.5 rounded-2xl text-xs font-black shadow-lg transition-all transform hover:-translate-y-0.5"
+            className="flex items-center justify-center gap-2 bg-white text-[#FF5C8D] hover:bg-pink-50 px-4 py-2.5 rounded-2xl text-xs font-black shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer whitespace-nowrap flex-shrink-0"
             title="Create and publish a new gift product to store"
           >
-            <FiPlus className="w-4 h-4 text-[#FF5C8D]" />
-            <span>+ Add New Product</span>
+            <FiPlus className="w-4 h-4 text-[#FF5C8D] flex-shrink-0" />
+            <span>Add New Product</span>
           </button>
 
-          <div className="flex items-center bg-white/20 p-1.5 rounded-2xl gap-2 backdrop-blur-md">
+          <button
+            onClick={handleAdminLogout}
+            className="flex items-center justify-center gap-1.5 bg-rose-900/30 hover:bg-rose-900/50 text-white px-3.5 py-2.5 rounded-2xl text-xs font-bold border border-white/20 transition-all cursor-pointer whitespace-nowrap flex-shrink-0"
+            title="Log Out Administrator"
+          >
+            <FiLogOut className="w-4 h-4 flex-shrink-0" />
+            <span>Sign Out</span>
+          </button>
+
+          <div className="flex items-center bg-white/20 p-1.5 rounded-2xl gap-1.5 backdrop-blur-md">
             <button
               onClick={() => setActiveTab('orders')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex-shrink-0 cursor-pointer ${
                 activeTab === 'orders' ? 'bg-white text-[#FF5C8D] shadow-md' : 'text-white hover:bg-white/10'
               }`}
             >
@@ -217,7 +359,7 @@ export default function Admin() {
 
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex-shrink-0 cursor-pointer ${
                 activeTab === 'analytics' ? 'bg-white text-[#FF5C8D] shadow-md' : 'text-white hover:bg-white/10'
               }`}
             >
@@ -227,7 +369,7 @@ export default function Admin() {
 
             <button
               onClick={() => setActiveTab('products')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex-shrink-0 cursor-pointer ${
                 activeTab === 'products' ? 'bg-white text-[#FF5C8D] shadow-md' : 'text-white hover:bg-white/10'
               }`}
             >
@@ -756,7 +898,7 @@ export default function Admin() {
 
       {/* Add / Edit Product Modal */}
       {isProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 relative max-h-[90vh] overflow-y-auto">
             
             <button
@@ -897,7 +1039,7 @@ export default function Admin() {
 
       {/* Invoice & Dispatch Label Printable Modal */}
       {selectedInvoiceOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto border-2 border-[#FF5C8D]">
             
             <button

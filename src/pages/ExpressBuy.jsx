@@ -181,7 +181,7 @@ export default function ExpressBuy() {
             image: targetProduct.image,
             order_id: orderId,
             handler: async function (response) {
-              await apiService.verifyRazorpayPayment({
+              const verifyRes = await apiService.verifyRazorpayPayment({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
@@ -195,18 +195,22 @@ export default function ExpressBuy() {
                 }
               });
 
-              expressBuy(
-                {
-                  id: targetProduct.id,
-                  name: targetProduct.name,
-                  price: targetProduct.price,
-                  quantity,
-                  color: selectedColor,
-                  size: selectedSize,
-                  image: targetProduct.image
-                },
-                { recipientName, address: fullAddr, paymentMethod: 'Razorpay Instant', giftNote }
-              );
+              if (!verifyRes?.success) {
+                await expressBuy(
+                  {
+                    id: targetProduct.id,
+                    name: targetProduct.name,
+                    price: targetProduct.price,
+                    quantity,
+                    color: selectedColor,
+                    size: selectedSize,
+                    image: targetProduct.image
+                  },
+                  { recipientName, address: fullAddr, paymentMethod: 'Razorpay Instant', giftNote }
+                );
+              } else {
+                await refreshOrders();
+              }
 
               navigate('/orders');
             },

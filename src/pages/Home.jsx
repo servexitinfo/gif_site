@@ -214,13 +214,13 @@ export default function Home() {
                   )}
 
                   <Link to={`/product/${p.id || p._id}`} className="block">
-                    <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-pink-50 mb-3 relative">
+                    <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-pink-50/60 mb-3 relative flex items-center justify-center p-2">
                       <img
                         src={p.image}
                         alt={p.name}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
 

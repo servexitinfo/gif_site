@@ -103,13 +103,13 @@ export default function Products() {
           {filteredProducts.map((p) => (
             <div key={p.id} className="gift-card p-5 flex flex-col justify-between group">
               <div>
-                <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-pink-50 mb-4">
+                <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-pink-50/60 mb-4 flex items-center justify-center p-2">
                   <img
                     src={p.image}
                     alt={p.name}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                   />
                   <button
                     onClick={() => toggleWishlist(p.id || p._id)}

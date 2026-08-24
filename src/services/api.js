@@ -6,23 +6,21 @@ const API_BASE_URL = RAW_API_URL.endsWith('/') ? RAW_API_URL.slice(0, -1) : RAW_
 
 async function fetchAPI(endpoint, options = {}) {
   const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  const primaryUrl = `${API_BASE_URL}${path}`;
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const targetUrls = isLocal ? [`${LOCAL_API_URL}${path}`, `${API_BASE_URL}${path}`] : [`${API_BASE_URL}${path}`];
 
-  try {
-    const res = await fetch(primaryUrl, options);
-    return res;
-  } catch (primaryErr) {
-    // Try local server fallback if running locally
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      try {
-        const localRes = await fetch(`${LOCAL_API_URL}${path}`, options);
-        return localRes;
-      } catch (fallbackErr) {
-        throw primaryErr;
+  let lastError;
+  for (const url of targetUrls) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok || res.status < 500) {
+        return res;
       }
+    } catch (err) {
+      lastError = err;
     }
-    throw primaryErr;
   }
+  throw lastError || new Error('Network request failed');
 }
 
 export const apiService = {

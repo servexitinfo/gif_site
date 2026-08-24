@@ -21,63 +21,7 @@ import lampAlder from '../assets/lamp_alder.png';
 export default function Home() {
   const { products, addToCart } = useCart();
   const [activeTab, setActiveTab] = useState('Popular');
-
-  const displayProducts = products && products.length > 0 ? products : [
-    {
-      id: 'gift-flower-vase',
-      name: 'Artisanal Ceramic Flower Vase',
-      rating: 5,
-      originalPrice: 150,
-      price: 120,
-      image: productFlowerVase,
-      isFeatured: true,
-    },
-    {
-      id: 'gift-teddy-bear',
-      name: 'Fluffy Pink Plush Teddy Bear',
-      rating: 5,
-      originalPrice: 60,
-      price: 45,
-      image: chairMarlow,
-      isFeatured: true,
-    },
-    {
-      id: 'gift-pen-set',
-      name: 'Luxury Fountain Pen & Cufflinks Set',
-      rating: 5,
-      originalPrice: 220,
-      price: 180,
-      image: sofaSide,
-      isFeatured: false,
-    },
-    {
-      id: 'gift-custom-mug',
-      name: 'Customized Ceramic Coffee Mug',
-      rating: 5,
-      originalPrice: 35,
-      price: 25,
-      image: lampAlder,
-      isFeatured: true,
-    },
-    {
-      id: 'gift-photo-frame',
-      name: 'Memory Wood Picture Frame Set',
-      rating: 5,
-      originalPrice: 85,
-      price: 65,
-      image: sofaMain,
-      isFeatured: false,
-    },
-    {
-      id: 'gift-perfume-box',
-      name: 'Rose Gold Perfume Gift Box',
-      rating: 5,
-      originalPrice: 120,
-      price: 95,
-      image: tableBowen,
-      isFeatured: true,
-    }
-  ];
+  const displayProducts = products || [];
 
   return (
     <div className="home-container">
@@ -220,99 +164,101 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. FEATURED PRODUCTS SECTION */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <h2 className="products-section-title">FEATURED PRODUCTS</h2>
+      {/* 3. FEATURED PRODUCTS SECTION (Hides automatically if no products in DB) */}
+      {displayProducts && displayProducts.length > 0 && (
+        <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+          <h2 className="products-section-title">FEATURED PRODUCTS</h2>
 
-        {/* Filter Navigation Tabs */}
-        <div className="products-filter-tabs">
-          <span
-            onClick={() => setActiveTab('New Arrivals')}
-            className={activeTab === 'New Arrivals' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
-          >
-            New Arrivals
-          </span>
-          <span className="filter-dash">────</span>
-          <span
-            onClick={() => setActiveTab('Popular')}
-            className={activeTab === 'Popular' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
-          >
-            Popular
-          </span>
-          <span className="filter-dash">────</span>
-          <span
-            onClick={() => setActiveTab('Best sells')}
-            className={activeTab === 'Best sells' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
-          >
-            Best sells
-          </span>
-          <span className="filter-dash">────</span>
-          <span
-            onClick={() => setActiveTab('Special')}
-            className={activeTab === 'Special' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
-          >
-            Special
-          </span>
-        </div>
-
-        {/* 8 Product Cards + 1 View All CTA Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayProducts.map((p) => (
-            <div key={p.id || p._id} className="product-card">
-              <div className="relative">
-                
-                {/* Top Right Hanging Pink Ribbon Tag */}
-                {(p.isFeatured || p.hasRibbon) && (
-                  <div className="product-ribbon-tag" title="Special Featured Gift">
-                    <span className="product-ribbon-text">FEATURED</span>
-                  </div>
-                )}
-
-                <Link to={`/product/${p.id || p._id}`} className="block">
-                  <div className="product-image-container flex items-center justify-center p-3">
-                    <img src={p.image} alt={p.name} className="h-44 object-contain rounded-lg hover:scale-105 transition-transform" />
-                  </div>
-
-                  <h3 className="product-title hover:text-[#FF5C8D] transition-colors">{p.name}</h3>
-                </Link>
-
-                {/* Pink Rating Stars */}
-                <div className="product-stars">
-                  {[...Array(5)].map((_, i) => (
-                    <FiStar
-                      key={i}
-                      className={i < (p.rating || 5) ? 'fill-[#FF5C8D] text-[#FF5C8D]' : 'text-slate-300'}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Price & Buy Now Button */}
-              <div className="product-price-row">
-                <div>
-                  {p.originalPrice && (
-                    <span className="product-price-original">₹{p.originalPrice}.00</span>
-                  )}
-                  <span className="product-price">₹{p.price}.00</span>
-                </div>
-                <button
-                  onClick={() => addToCart({ id: p.id || p._id, name: p.name, price: p.price, image: p.image, quantity: 1, color: 'Standard', size: 'Standard' })}
-                  className="product-buy-btn"
-                >
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {/* Card 9: View All Product CTA */}
-          <div className="view-all-card">
-            <Link to="/products" className="view-all-btn">
-              View All Product ──────→
-            </Link>
+          {/* Filter Navigation Tabs */}
+          <div className="products-filter-tabs">
+            <span
+              onClick={() => setActiveTab('New Arrivals')}
+              className={activeTab === 'New Arrivals' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
+            >
+              New Arrivals
+            </span>
+            <span className="filter-dash">────</span>
+            <span
+              onClick={() => setActiveTab('Popular')}
+              className={activeTab === 'Popular' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
+            >
+              Popular
+            </span>
+            <span className="filter-dash">────</span>
+            <span
+              onClick={() => setActiveTab('Best sells')}
+              className={activeTab === 'Best sells' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
+            >
+              Best sells
+            </span>
+            <span className="filter-dash">────</span>
+            <span
+              onClick={() => setActiveTab('Special')}
+              className={activeTab === 'Special' ? 'products-filter-tab-active' : 'products-filter-tab-inactive'}
+            >
+              Special
+            </span>
           </div>
-        </div>
-      </section>
+
+          {/* Product Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {displayProducts.map((p) => (
+              <div key={p.id || p._id} className="product-card">
+                <div className="relative">
+                  
+                  {/* Top Right Hanging Pink Ribbon Tag */}
+                  {(p.isFeatured || p.hasRibbon) && (
+                    <div className="product-ribbon-tag" title="Special Featured Gift">
+                      <span className="product-ribbon-text">FEATURED</span>
+                    </div>
+                  )}
+
+                  <Link to={`/product/${p.id || p._id}`} className="block">
+                    <div className="product-image-container flex items-center justify-center p-3">
+                      <img src={p.image} alt={p.name} className="h-44 object-contain rounded-lg hover:scale-105 transition-transform" />
+                    </div>
+
+                    <h3 className="product-title hover:text-[#FF5C8D] transition-colors">{p.name}</h3>
+                  </Link>
+
+                  {/* Pink Rating Stars */}
+                  <div className="product-stars">
+                    {[...Array(5)].map((_, i) => (
+                      <FiStar
+                        key={i}
+                        className={i < (p.rating || 5) ? 'fill-[#FF5C8D] text-[#FF5C8D]' : 'text-slate-300'}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Price & Buy Now Button */}
+                <div className="product-price-row">
+                  <div>
+                    {p.originalPrice && (
+                      <span className="product-price-original">₹{p.originalPrice}.00</span>
+                    )}
+                    <span className="product-price">₹{p.price}.00</span>
+                  </div>
+                  <button
+                    onClick={() => addToCart({ id: p.id || p._id, name: p.name, price: p.price, image: p.image, quantity: 1, color: 'Standard', size: 'Standard' })}
+                    className="product-buy-btn"
+                  >
+                    Buy Now
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {/* View All Product CTA Card */}
+            <div className="view-all-card">
+              <Link to="/products" className="view-all-btn">
+                View All Product ──────→
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   );

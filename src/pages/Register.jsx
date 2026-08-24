@@ -43,9 +43,12 @@ export default function Register() {
 
     if (res.success) {
       setSuccess(true);
+      if (res.data) {
+        localStorage.setItem('gift_site_user', JSON.stringify(res.data));
+      }
       setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+        navigate('/orders');
+      }, 1200);
     } else {
       setError(res.message || 'Registration failed');
     }

@@ -30,18 +30,31 @@ export const CartProvider = ({ children }) => {
   });
 
   // Sync strictly with Backend API on mount
-  useEffect(() => {
-    async function loadBackendData() {
+  const refreshProducts = async () => {
+    try {
       const apiProducts = await apiService.getProducts();
       if (Array.isArray(apiProducts)) {
         setProducts(apiProducts);
       }
+    } catch (e) {
+      console.warn('Failed to refresh products from DB:', e);
+    }
+  };
+
+  const refreshOrders = async () => {
+    try {
       const apiOrders = await apiService.getOrders();
       if (Array.isArray(apiOrders)) {
         setOrders(apiOrders);
       }
+    } catch (e) {
+      console.warn('Failed to refresh orders from DB:', e);
     }
-    loadBackendData();
+  };
+
+  useEffect(() => {
+    refreshProducts();
+    refreshOrders();
   }, []);
 
   // Save products to localStorage when changed
@@ -71,8 +84,8 @@ export const CartProvider = ({ children }) => {
     setCartItems([]);
   };
 
-  // Product Management Methods (Admin)
-  const addProduct = (newProduct) => {
+  // Product Management Methods (Admin - Direct DB Integration)
+  const addProduct = async (newProduct) => {
     const productToAdd = {
       ...newProduct,
       id: newProduct.id || `gift-${Date.now()}`,
@@ -85,26 +98,29 @@ export const CartProvider = ({ children }) => {
       isFeatured: newProduct.isFeatured || false
     };
     setProducts((prev) => [productToAdd, ...prev]);
-    apiService.addProduct(productToAdd);
+    await apiService.addProduct(productToAdd);
+    await refreshProducts();
     showToast(`Added product "${productToAdd.name}"`);
   };
 
-  const updateProduct = (updatedProduct) => {
+  const updateProduct = async (updatedProduct) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === updatedProduct.id ? { ...p, ...updatedProduct } : p))
     );
-    apiService.updateProduct(updatedProduct.id, updatedProduct);
+    await apiService.updateProduct(updatedProduct.id, updatedProduct);
+    await refreshProducts();
     showToast(`Updated product "${updatedProduct.name}"`);
   };
 
-  const deleteProduct = (id) => {
+  const deleteProduct = async (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    apiService.deleteProduct(id);
+    await apiService.deleteProduct(id);
+    await refreshProducts();
     showToast('Product removed');
   };
 
-  // Order Management Methods (Admin)
-  const updateOrderStatus = (orderId, newStatus, trackingInfo = {}) => {
+  // Order Management Methods (Admin - Direct DB Integration)
+  const updateOrderStatus = async (orderId, newStatus, trackingInfo = {}) => {
     setOrders((prev) =>
       prev.map((ord) => {
         if (ord.id === orderId) {
@@ -129,13 +145,14 @@ export const CartProvider = ({ children }) => {
         return ord;
       })
     );
-    apiService.updateOrderStatus(orderId, newStatus, trackingInfo);
+    await apiService.updateOrderStatus(orderId, newStatus, trackingInfo);
+    await refreshOrders();
     showToast(`Order #${orderId} updated to ${newStatus}`);
   };
 
-  const placeOrder = (orderData) => {
+  const placeOrder = async (orderData) => {
     const newOrder = {
-      id: `GIFT-${Math.floor(100000 + Math.random() * 900000)}`,
+      id: orderData.id || `GIFT-${Math.floor(100000 + Math.random() * 900000)}`,
       date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
       total: orderData.total,
       status: 'Processing',
@@ -153,17 +170,18 @@ export const CartProvider = ({ children }) => {
     };
 
     setOrders((prev) => [newOrder, ...prev]);
-    apiService.createOrder(newOrder);
+    await apiService.createOrder(newOrder);
+    await refreshOrders();
     clearCart();
     showToast(`Order #${newOrder.id} placed successfully!`);
     return newOrder;
   };
 
   // Express 1-Click Single Product Purchase Flow
-  const expressBuy = (productItem, customerDetails) => {
+  const expressBuy = async (productItem, customerDetails) => {
     const totalAmount = productItem.price * productItem.quantity + 50; // ₹50 express shipping
     const newOrder = {
-      id: `EXPRESS-${Math.floor(100000 + Math.random() * 900000)}`,
+      id: customerDetails.id || `EXPRESS-${Math.floor(100000 + Math.random() * 900000)}`,
       date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
       total: totalAmount,
       status: 'Processing',
@@ -191,7 +209,8 @@ export const CartProvider = ({ children }) => {
     };
 
     setOrders((prev) => [newOrder, ...prev]);
-    apiService.createOrder({ ...newOrder, isExpress: true });
+    await apiService.createOrder({ ...newOrder, isExpress: true });
+    await refreshOrders();
     showToast(`Express Order #${newOrder.id} placed!`);
     return newOrder;
   };
@@ -234,20 +253,6 @@ export const CartProvider = ({ children }) => {
     if (!id) return null;
     const found = products.find((p) => p.id === id || p._id === id);
     return found || null;
-  };
-
-  const refreshProducts = async () => {
-    const apiProducts = await apiService.getProducts();
-    if (apiProducts && apiProducts.length > 0) {
-      setProducts(apiProducts);
-    }
-  };
-
-  const refreshOrders = async () => {
-    const apiOrders = await apiService.getOrders();
-    if (apiOrders) {
-      setOrders(apiOrders);
-    }
   };
 
   return (

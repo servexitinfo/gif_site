@@ -28,7 +28,10 @@ import {
   FiLock,
   FiShield,
   FiKey,
-  FiLogOut
+  FiLogOut,
+  FiUpload,
+  FiImage,
+  FiLink
 } from 'react-icons/fi';
 import { apiService } from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -137,6 +140,26 @@ export default function Admin() {
     const tracking = inputs.tracking !== undefined ? inputs.tracking : (ord.trackingNumber || `AWB-${Math.floor(10000000 + Math.random() * 90000000)}`);
     
     updateOrderStatus(ord.id, ord.status, { courierPartner: courier, trackingNumber: tracking });
+  };
+
+  // Handle Local Image File Upload (Convert to Data URL)
+  const handleImageFileUpload = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Selected image size exceeds 5MB limit. Please choose a smaller image.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({
+        ...prev,
+        image: reader.result
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   // Handle Open Add Modal
@@ -980,15 +1003,60 @@ export default function Admin() {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-[#23272A] mb-1">Image URL (Optional)</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/photo-..."
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full bg-pink-50 border border-[#FFD6E0] rounded-xl px-3.5 py-2.5 text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                />
+              {/* Product Photo Upload / Image URL Input Section */}
+              <div className="space-y-2 bg-pink-50/50 p-3.5 rounded-2xl border border-[#FFD6E0]">
+                <label className="block font-bold text-[#23272A] text-xs flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <FiImage className="text-[#FF5C8D]" /> Product Image / Photo
+                  </span>
+                  <span className="text-[10px] text-[#64748B]">Upload File or Paste Web Link</span>
+                </label>
+
+                {/* Live Image Preview Thumbnail (if image is present) */}
+                {formData.image && (
+                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-[#FFD6E0] bg-white group">
+                    <img src={formData.image} alt="Product Preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, image: '' })}
+                        className="bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 hover:bg-rose-700 shadow-md transition-all cursor-pointer"
+                      >
+                        <FiTrash2 className="w-3.5 h-3.5" />
+                        <span>Remove Photo</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* File Upload Button & URL Input Tabs */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  
+                  {/* File Upload Input */}
+                  <label className="flex items-center justify-center gap-2 bg-white border border-[#FFD6E0] hover:border-[#FF5C8D] hover:bg-pink-50/50 px-3 py-2.5 rounded-xl text-xs font-bold text-[#FF5C8D] cursor-pointer transition-all shadow-sm text-center">
+                    <FiUpload className="w-4 h-4 text-[#FF5C8D]" />
+                    <span>Upload Image File</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {/* Image URL Input */}
+                  <div className="relative">
+                    <FiLink className="absolute left-3 top-3 text-[#94A3B8] w-3.5 h-3.5" />
+                    <input
+                      type="url"
+                      placeholder="Or paste image URL..."
+                      value={formData.image}
+                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                      className="w-full bg-white border border-[#FFD6E0] rounded-xl pl-8 pr-3 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                    />
+                  </div>
+
+                </div>
               </div>
 
               <div>

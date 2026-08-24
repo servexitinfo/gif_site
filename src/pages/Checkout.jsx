@@ -136,9 +136,15 @@ export default function Checkout() {
           receipt: `rcpt_${Date.now()}`
         });
 
-        const rzpOrder = rzpRes?.order || (rzpRes?.id ? rzpRes : null);
-        const orderId = rzpOrder?.id || rzpOrder?.order_id || rzpRes?.order_id;
-        const keyId = rzpRes?.key_id || rzpRes?.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TQTdFzIaKiY36u';
+        if (!rzpRes?.success) {
+          alert(`Razorpay Payment Error: ${rzpRes?.error || rzpRes?.message || 'Failed to create order'}`);
+          setIsProcessingPayment(false);
+          return;
+        }
+
+        const rzpOrder = rzpRes.order || rzpRes;
+        const orderId = rzpOrder.id || rzpOrder.order_id || rzpRes.order_id;
+        const keyId = rzpRes.key_id || rzpRes.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID;
 
         if (window.Razorpay && orderId) {
           const options = {
@@ -202,13 +208,11 @@ export default function Checkout() {
           });
           rzp.open();
         } else {
-          // Fallback if Razorpay SDK script is blocked or offline
-          processStandardOrder();
+          alert('Razorpay Checkout SDK script not available.');
           setIsProcessingPayment(false);
         }
       } catch (err) {
-        console.warn('Razorpay checkout error, completing standard order:', err);
-        processStandardOrder();
+        alert(`Payment Error: ${err.message}`);
         setIsProcessingPayment(false);
       }
     } else {

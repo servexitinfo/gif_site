@@ -162,19 +162,24 @@ export default function ExpressBuy() {
           receipt: `expr_${Date.now()}`
         });
 
-        const rzpOrder = rzpRes?.order || (rzpRes?.id ? rzpRes : null);
-        const orderId = rzpOrder?.id || rzpOrder?.order_id || rzpRes?.order_id;
-        const keyId = rzpRes?.key_id || rzpRes?.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TQTdFzIaKiY36u';
+        if (!rzpRes?.success) {
+          alert(`Razorpay Express Error: ${rzpRes?.error || rzpRes?.message || 'Failed to create order'}`);
+          return;
+        }
+
+        const rzpOrder = rzpRes.order || rzpRes;
+        const orderId = rzpOrder.id || rzpOrder.order_id || rzpRes.order_id;
+        const keyId = rzpRes.key_id || rzpRes.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID;
 
         if (window.Razorpay && orderId) {
           const options = {
             key: keyId,
-            amount: rzpOrder?.amount || (totalExpressPrice * 100),
+            amount: rzpOrder.amount || Math.round(totalExpressPrice * 100),
             currency: rzpOrder.currency || 'INR',
             name: 'GiftCraft Express Gift Dispatch',
             description: `1-Click Express: ${targetProduct.name}`,
             image: targetProduct.image,
-            order_id: rzpOrder.id,
+            order_id: orderId,
             handler: async function (response) {
               await apiService.verifyRazorpayPayment({
                 razorpay_order_id: response.razorpay_order_id,
@@ -217,9 +222,13 @@ export default function ExpressBuy() {
           const rzp = new window.Razorpay(options);
           rzp.open();
           return;
+        } else {
+          alert('Razorpay Checkout SDK not loaded.');
+          return;
         }
       } catch (err) {
-        console.warn('Razorpay 1-Click error, completing standard order:', err);
+        alert(`Payment Error: ${err.message}`);
+        return;
       }
     }
 

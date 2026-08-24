@@ -65,7 +65,9 @@ export default function ProductDetails() {
     );
   }
 
-  const images = product.image ? [product.image, sofaMain, sofaSide, sofaDetail] : [sofaMain, sofaSide, sofaDetail, sofaRoom];
+  const images = (Array.isArray(product.images) && product.images.length > 0)
+    ? product.images
+    : (product.image ? [product.image] : [sofaMain, sofaSide, sofaDetail, sofaRoom]);
 
   const getPrice = () => {
     const basePrice = product.price || 95;

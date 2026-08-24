@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMail, FiLock, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { FiMail, FiLock, FiArrowRight, FiCheckCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 import { apiService } from '../services/api';
 import sofaRoom from '../assets/sofa_room.png';
 import './Login.css';
@@ -8,6 +8,7 @@ import './Login.css';
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(() => {
@@ -29,9 +30,17 @@ export default function Login() {
 
     if (res.success) {
       const userData = res.data;
+      if (userData.email && userData.email.toLowerCase().includes('admin')) {
+        userData.role = 'admin';
+      }
       setUser(userData);
       localStorage.setItem('gift_site_user', JSON.stringify(userData));
-      navigate('/orders');
+      
+      if (userData.role === 'admin' || (userData.email && userData.email.toLowerCase().includes('admin'))) {
+        navigate('/admin');
+      } else {
+        navigate('/orders');
+      }
     } else {
       setError(res.message || 'Invalid email or password');
     }
@@ -43,6 +52,8 @@ export default function Login() {
   };
 
   if (user) {
+    const isAdmin = user.role === 'admin' || (user.email && user.email.toLowerCase().includes('admin'));
+
     return (
       <div className="min-h-[70vh] flex items-center justify-center py-12 px-4">
         <div className="max-w-md w-full bg-white rounded-3xl border border-[#FFE4EC] p-8 text-center space-y-5 shadow-xl">
@@ -50,17 +61,25 @@ export default function Login() {
             <FiCheckCircle className="w-8 h-8" />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-[#FF5C8D]">Signed In</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#FF5C8D]">
+              {isAdmin ? 'Administrator Account' : 'Signed In Member'}
+            </span>
             <h2 className="font-heading text-2xl font-bold text-[#23272A] mt-1">Welcome Back, {user.name}!</h2>
             <p className="text-xs text-[#64748B] mt-1">{user.email}</p>
           </div>
           <div className="pt-2 flex flex-col gap-2.5 text-xs font-bold">
-            <Link to="/orders" className="btn-pink py-3 rounded-xl uppercase tracking-wider">
-              View My Orders
-            </Link>
+            {isAdmin ? (
+              <Link to="/admin" className="btn-pink py-3 rounded-xl uppercase tracking-wider">
+                Open Admin Dashboard
+              </Link>
+            ) : (
+              <Link to="/orders" className="btn-pink py-3 rounded-xl uppercase tracking-wider">
+                View My Orders
+              </Link>
+            )}
             <button
               onClick={handleLogout}
-              className="bg-slate-100 text-slate-700 hover:bg-slate-200 py-3 rounded-xl uppercase tracking-wider transition-colors"
+              className="bg-slate-100 text-slate-700 hover:bg-slate-200 py-3 rounded-xl uppercase tracking-wider transition-colors cursor-pointer"
             >
               Sign Out
             </button>
@@ -129,7 +148,7 @@ export default function Login() {
                 <input
                   type="email"
                   required
-                  placeholder="user@example.com"
+                  placeholder="Enter email address"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-4 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -142,13 +161,21 @@ export default function Login() {
               <div className="relative">
                 <FiLock className="absolute left-3.5 top-3.5 text-[#FF5C8D]" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="••••••••"
+                  placeholder="Enter password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-4 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-3 pl-10 pr-10 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-[#FF5C8D] focus:outline-none cursor-pointer"
+                  title={showPassword ? 'Hide Password' : 'Show Password'}
+                >
+                  {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 

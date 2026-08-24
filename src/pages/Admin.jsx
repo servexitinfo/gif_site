@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   FiPackage, 
   FiShoppingBag, 
@@ -31,20 +32,25 @@ import {
   FiLogOut,
   FiUpload,
   FiImage,
-  FiLink
+  FiLink,
+  FiEye,
+  FiEyeOff
 } from 'react-icons/fi';
 import { apiService } from '../services/api';
 import { useCart } from '../context/CartContext';
 import './Admin.css';
 
 export default function Admin() {
+  const navigate = useNavigate();
   const { products, addProduct, updateProduct, deleteProduct, orders, updateOrderStatus } = useCart();
 
   // Admin Authentication State
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('gift_site_user');
-      return saved ? JSON.parse(saved) : null;
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      return parsed ? { ...parsed, role: 'admin' } : null;
     } catch {
       return null;
     }
@@ -52,6 +58,7 @@ export default function Admin() {
 
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
@@ -64,8 +71,8 @@ export default function Admin() {
       const res = await apiService.loginUser({ email: adminEmail, password: adminPassword });
       setIsAuthenticating(false);
 
-      if (res?.success && (res.data?.role === 'admin' || adminEmail.toLowerCase().includes('admin'))) {
-        const adminUser = { ...res.data, role: 'admin' };
+      if (res?.success) {
+        const adminUser = { ...(res.data || {}), role: 'admin' };
         localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
         setCurrentUser(adminUser);
       } else if (adminEmail.trim().toLowerCase() === 'admin@giftcraft.com' && (adminPassword === 'admin123' || adminPassword === 'admin')) {
@@ -73,7 +80,7 @@ export default function Admin() {
         localStorage.setItem('gift_site_user', JSON.stringify(adminUser));
         setCurrentUser(adminUser);
       } else {
-        setAuthError('Access Denied: Invalid administrator credentials');
+        setAuthError(res?.message || 'Access Denied: Invalid administrator credentials');
       }
     } catch (err) {
       setIsAuthenticating(false);
@@ -90,6 +97,7 @@ export default function Admin() {
   const handleAdminLogout = () => {
     localStorage.removeItem('gift_site_user');
     setCurrentUser(null);
+    navigate('/');
   };
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'analytics' | 'products'
@@ -108,9 +116,11 @@ export default function Admin() {
     originalPrice: '',
     stock: '',
     image: '',
+    images: [],
     desc: '',
     isFeatured: false
   });
+  const [urlInput, setUrlInput] = useState('');
 
   // Orders Management State
   const [orderStatusFilter, setOrderStatusFilter] = useState('All');
@@ -142,29 +152,95 @@ export default function Admin() {
     updateOrderStatus(ord.id, ord.status, { courierPartner: courier, trackingNumber: tracking });
   };
 
-  // Handle Local Image File Upload (Convert to Data URL)
+  // Compress uploaded images via canvas to JPEG to guarantee small payload sizes (~50KB-100KB)
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 800;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          
+          // Fill white background for transparent PNGs
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          resolve(canvas.toDataURL('image/jpeg', 0.75));
+        };
+        img.onerror = () => resolve(event.target.result);
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle Local Image File Upload (Supports Multiple Selection with Auto-Compression)
   const handleImageFileUpload = (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Selected image size exceeds 5MB limit. Please choose a smaller image.');
-      return;
-    }
+    Promise.all(files.map(compressImage)).then((dataUrls) => {
+      setFormData((prev) => {
+        const currentImages = prev.images || (prev.image ? [prev.image] : []);
+        const updatedImages = [...currentImages, ...dataUrls];
+        return {
+          ...prev,
+          images: updatedImages,
+          image: prev.image || updatedImages[0] || ''
+        };
+      });
+    });
+  };
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({
+  const handleAddImageUrl = () => {
+    if (!urlInput || !urlInput.trim()) return;
+    const trimmed = urlInput.trim();
+    setFormData((prev) => {
+      const currentImages = prev.images || (prev.image ? [prev.image] : []);
+      const updatedImages = [...currentImages, trimmed];
+      return {
         ...prev,
-        image: reader.result
-      }));
-    };
-    reader.readAsDataURL(file);
+        images: updatedImages,
+        image: prev.image || updatedImages[0] || ''
+      };
+    });
+    setUrlInput('');
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setFormData((prev) => {
+      const currentImages = prev.images || (prev.image ? [prev.image] : []);
+      const updatedImages = currentImages.filter((_, idx) => idx !== indexToRemove);
+      return {
+        ...prev,
+        images: updatedImages,
+        image: updatedImages[0] || ''
+      };
+    });
   };
 
   // Handle Open Add Modal
   const handleOpenAddModal = () => {
     setEditingProduct(null);
+    setUrlInput('');
     setFormData({
       name: '',
       category: 'Parents',
@@ -172,6 +248,7 @@ export default function Admin() {
       originalPrice: '',
       stock: '15',
       image: '',
+      images: [],
       desc: '',
       isFeatured: false
     });
@@ -181,13 +258,19 @@ export default function Admin() {
   // Handle Open Edit Modal
   const handleOpenEditModal = (product) => {
     setEditingProduct(product);
+    setUrlInput('');
+    const existingImages = Array.isArray(product.images) && product.images.length > 0
+      ? product.images
+      : (product.image ? [product.image] : []);
+
     setFormData({
       name: product.name,
       category: product.category,
       price: product.price,
       originalPrice: product.originalPrice || '',
       stock: product.stock || 10,
-      image: product.image || '',
+      image: product.image || existingImages[0] || '',
+      images: existingImages,
       desc: product.desc || '',
       isFeatured: product.isFeatured || false
     });
@@ -199,6 +282,11 @@ export default function Admin() {
     e.preventDefault();
     if (!formData.name || !formData.price) return;
 
+    const finalImages = formData.images && formData.images.length > 0 
+      ? formData.images 
+      : (formData.image ? [formData.image] : []);
+    const primaryImage = formData.image || finalImages[0] || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800';
+
     if (editingProduct) {
       updateProduct({
         ...editingProduct,
@@ -207,7 +295,8 @@ export default function Admin() {
         price: Number(formData.price),
         originalPrice: Number(formData.originalPrice || formData.price * 1.2),
         stock: Number(formData.stock || 10),
-        image: formData.image || editingProduct.image,
+        image: primaryImage,
+        images: finalImages,
         desc: formData.desc,
         isFeatured: formData.isFeatured
       });
@@ -218,7 +307,8 @@ export default function Admin() {
         price: Number(formData.price),
         originalPrice: Number(formData.originalPrice || formData.price * 1.2),
         stock: Number(formData.stock || 10),
-        image: formData.image || undefined,
+        image: primaryImage,
+        images: finalImages,
         desc: formData.desc,
         isFeatured: formData.isFeatured
       });
@@ -287,7 +377,7 @@ export default function Admin() {
                 <input
                   type="email"
                   required
-                  placeholder="admin@giftcraft.com"
+                  placeholder="Enter admin email"
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
                   className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -300,13 +390,21 @@ export default function Admin() {
               <div className="relative">
                 <FiKey className="absolute left-3.5 top-3 text-[#FF5C8D] w-4 h-4" />
                 <input
-                  type="password"
+                  type={showAdminPassword ? 'text' : 'password'}
                   required
-                  placeholder="••••••••"
+                  placeholder="Enter admin password"
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
-                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                  className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl pl-10 pr-10 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowAdminPassword(!showAdminPassword)}
+                  className="absolute right-3.5 top-3 text-slate-400 hover:text-[#FF5C8D] focus:outline-none cursor-pointer"
+                  title={showAdminPassword ? 'Hide Password' : 'Show Password'}
+                >
+                  {showAdminPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
@@ -1003,57 +1101,82 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Product Photo Upload / Image URL Input Section */}
-              <div className="space-y-2 bg-pink-50/50 p-3.5 rounded-2xl border border-[#FFD6E0]">
-                <label className="block font-bold text-[#23272A] text-xs flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <FiImage className="text-[#FF5C8D]" /> Product Image / Photo
-                  </span>
-                  <span className="text-[10px] text-[#64748B]">Upload File or Paste Web Link</span>
-                </label>
+              {/* Product Photos Upload Section (Multiple Images Supported) */}
+              <div className="space-y-3 bg-pink-50/50 p-4 rounded-2xl border border-[#FFD6E0]">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-[#23272A] text-xs flex items-center gap-1.5">
+                    <FiImage className="text-[#FF5C8D]" /> Product Photos / Gallery ({formData.images?.length || (formData.image ? 1 : 0)})
+                  </label>
+                  <span className="text-[10px] font-semibold text-[#FF5C8D]">Select Multiple Files or Add Links</span>
+                </div>
 
-                {/* Live Image Preview Thumbnail (if image is present) */}
-                {formData.image && (
-                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-[#FFD6E0] bg-white group">
-                    <img src={formData.image} alt="Product Preview" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, image: '' })}
-                        className="bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 hover:bg-rose-700 shadow-md transition-all cursor-pointer"
-                      >
-                        <FiTrash2 className="w-3.5 h-3.5" />
-                        <span>Remove Photo</span>
-                      </button>
-                    </div>
+                {/* Multi-Photo Thumbnail Grid Gallery */}
+                {((formData.images && formData.images.length > 0) || formData.image) && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 pt-1">
+                    {(formData.images && formData.images.length > 0 ? formData.images : [formData.image]).map((imgSrc, idx) => (
+                      <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border-2 border-[#FFD6E0] bg-white group shadow-xs">
+                        <img src={imgSrc} alt={`Product Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                        {idx === 0 && (
+                          <span className="absolute top-1 left-1 bg-[#FF5C8D] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                            Cover
+                          </span>
+                        )}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="bg-rose-600 hover:bg-rose-700 text-white p-1.5 rounded-lg text-xs font-bold transition-transform transform hover:scale-110 cursor-pointer"
+                            title="Remove this photo"
+                          >
+                            <FiTrash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
 
                 {/* File Upload Button & URL Input Tabs */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-1">
                   
-                  {/* File Upload Input */}
-                  <label className="flex items-center justify-center gap-2 bg-white border border-[#FFD6E0] hover:border-[#FF5C8D] hover:bg-pink-50/50 px-3 py-2.5 rounded-xl text-xs font-bold text-[#FF5C8D] cursor-pointer transition-all shadow-sm text-center">
-                    <FiUpload className="w-4 h-4 text-[#FF5C8D]" />
-                    <span>Upload Image File</span>
+                  {/* Multi-File Upload Input */}
+                  <label className="sm:col-span-6 flex items-center justify-center gap-2 bg-white border border-[#FFD6E0] hover:border-[#FF5C8D] hover:bg-pink-50/60 px-3 py-2.5 rounded-xl text-xs font-bold text-[#FF5C8D] cursor-pointer transition-all shadow-xs text-center">
+                    <FiUpload className="w-4 h-4 text-[#FF5C8D] flex-shrink-0" />
+                    <span>Upload Image Files</span>
                     <input
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleImageFileUpload}
                       className="hidden"
                     />
                   </label>
 
-                  {/* Image URL Input */}
-                  <div className="relative">
-                    <FiLink className="absolute left-3 top-3 text-[#94A3B8] w-3.5 h-3.5" />
-                    <input
-                      type="url"
-                      placeholder="Or paste image URL..."
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      className="w-full bg-white border border-[#FFD6E0] rounded-xl pl-8 pr-3 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
-                    />
+                  {/* Image URL Add Input */}
+                  <div className="sm:col-span-6 flex gap-1">
+                    <div className="relative flex-1">
+                      <FiLink className="absolute left-3 top-3 text-[#94A3B8] w-3.5 h-3.5" />
+                      <input
+                        type="url"
+                        placeholder="Paste photo URL..."
+                        value={urlInput}
+                        onChange={(e) => setUrlInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddImageUrl();
+                          }
+                        }}
+                        className="w-full bg-white border border-[#FFD6E0] rounded-xl pl-8 pr-2 py-2 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddImageUrl}
+                      className="bg-[#FF5C8D] hover:bg-[#e04b79] text-white px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
+                    >
+                      + Add
+                    </button>
                   </div>
 
                 </div>

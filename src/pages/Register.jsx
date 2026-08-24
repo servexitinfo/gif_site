@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMail, FiLock, FiUser, FiPhone, FiHome, FiMapPin, FiGlobe, FiArrowRight, FiCheckCircle, FiTag } from 'react-icons/fi';
+import { FiMail, FiLock, FiUser, FiPhone, FiHome, FiMapPin, FiGlobe, FiArrowRight, FiCheckCircle, FiTag, FiEye, FiEyeOff } from 'react-icons/fi';
 import { apiService } from '../services/api';
 import sofaRoom from '../assets/sofa_room.png';
 import './Login.css';
 
 export default function Register() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,7 +17,7 @@ export default function Register() {
     landmark: '',
     city: '',
     district: '',
-    state: 'Kerala',
+    state: '',
     pincode: '',
     addressType: 'Home'
   });
@@ -123,7 +124,7 @@ export default function Register() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. John Doe"
+                    placeholder="Enter full name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -138,7 +139,7 @@ export default function Register() {
                   <input
                     type="tel"
                     required
-                    placeholder="e.g. +91 9876543210"
+                    placeholder="Enter mobile number"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -155,7 +156,7 @@ export default function Register() {
                   <input
                     type="email"
                     required
-                    placeholder="user@example.com"
+                    placeholder="Enter email address"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -168,13 +169,21 @@ export default function Register() {
                 <div className="relative">
                   <FiLock className="absolute left-3 top-3 text-[#FF5C8D]" />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     required
-                    placeholder="••••••••"
+                    placeholder="Enter password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
+                    className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-9 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-slate-400 hover:text-[#FF5C8D] focus:outline-none cursor-pointer"
+                    title={showPassword ? 'Hide Password' : 'Show Password'}
+                  >
+                    {showPassword ? <FiEyeOff className="w-3.5 h-3.5" /> : <FiEye className="w-3.5 h-3.5" />}
+                  </button>
                 </div>
               </div>
             </div>
@@ -192,7 +201,7 @@ export default function Register() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Door No. 42, Green Avenue, MG Road"
+                  placeholder="Flat / House No., Building, Street"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -208,7 +217,7 @@ export default function Register() {
                   <FiMapPin className="absolute left-3 top-3 text-[#FF5C8D]" />
                   <input
                     type="text"
-                    placeholder="e.g. Near Metro Station / Town Hall"
+                    placeholder="Landmark / Nearby place"
                     value={formData.landmark}
                     onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
                     className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 pl-9 pr-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -223,7 +232,7 @@ export default function Register() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. 682001"
+                    placeholder="Pincode"
                     maxLength={6}
                     value={formData.pincode}
                     onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
@@ -240,7 +249,7 @@ export default function Register() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Kochi"
+                  placeholder="City / Town"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 px-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -252,7 +261,7 @@ export default function Register() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Ernakulam"
+                  placeholder="District"
                   value={formData.district}
                   onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                   className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 px-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -262,10 +271,12 @@ export default function Register() {
               <div>
                 <label className="block text-xs font-bold text-[#23272A] mb-1 uppercase tracking-wider">State *</label>
                 <select
+                  required
                   value={formData.state}
                   onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                   className="w-full bg-pink-50/50 border border-[#FFD6E0] rounded-xl py-2.5 px-3 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
                 >
+                  <option value="" disabled>Select State</option>
                   {indianStates.map((st) => (
                     <option key={st} value={st}>{st}</option>
                   ))}

@@ -761,7 +761,7 @@ export default function Admin() {
                             <div key={idx} className="flex items-center justify-between bg-pink-50/40 p-3 rounded-xl border border-[#FFE4EC]">
                               <div className="flex items-center gap-3">
                                 {item.image ? (
-                                  <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover border border-[#FFE4EC]" />
+                                  <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-contain object-center border border-[#FFE4EC] p-0.5" />
                                 ) : (
                                   <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center text-[#FF5C8D]">
                                     <FiPackage className="w-6 h-6" />
@@ -966,7 +966,7 @@ export default function Admin() {
                         <td className="py-3.5 px-4">
                           <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-xl bg-pink-50 overflow-hidden border border-[#FFE4EC] flex-shrink-0">
-                              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                              <img src={product.image} alt={product.name} className="w-full h-full object-contain object-center p-0.5" />
                             </div>
                             <div>
                               <p className="font-bold text-[#23272A] line-clamp-1">{product.name}</p>
@@ -1136,7 +1136,7 @@ export default function Admin() {
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 pt-1">
                     {(formData.images && formData.images.length > 0 ? formData.images : [formData.image]).map((imgSrc, idx) => (
                       <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border-2 border-[#FFD6E0] bg-white group shadow-xs">
-                        <img src={imgSrc} alt={`Product Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img src={imgSrc} alt={`Product Photo ${idx + 1}`} className="w-full h-full object-contain object-center p-0.5" />
                         {idx === 0 && (
                           <span className="absolute top-1 left-1 bg-[#FF5C8D] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider shadow-xs">
                             ★ Cover

@@ -122,7 +122,7 @@ export default function ProductDetails() {
         
         {/* Left Gallery (7 Cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="relative aspect-4/3 sm:aspect-5/4 bg-pink-50/60 rounded-3xl overflow-hidden shadow-lg border border-[#FFE4EC] group flex items-center justify-center p-3">
+          <div className="relative aspect-[3/4] sm:aspect-square bg-pink-50/60 rounded-3xl overflow-hidden shadow-lg border border-[#FFE4EC] group flex items-center justify-center p-3">
             <img
               src={images[selectedImage]}
               alt={product.name}

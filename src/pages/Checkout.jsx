@@ -264,7 +264,7 @@ export default function Checkout() {
             <div className="space-y-3">
               {placedOrder.items.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3 text-xs">
-                  <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover bg-pink-50" />
+                  <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-contain object-center p-0.5 bg-pink-50" />
                   <div className="flex-1">
                     <h5 className="font-bold text-[#23272A]">{item.name}</h5>
                     <span className="text-[#718096]">Qty: {item.quantity}</span>
@@ -581,7 +581,7 @@ export default function Checkout() {
             <div className="space-y-4 max-h-72 overflow-y-auto pr-1">
               {cartItems.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3 text-xs">
-                  <img src={item.image} alt={item.name} className="w-14 h-14 rounded-xl object-cover bg-pink-50" />
+                  <img src={item.image} alt={item.name} className="w-14 h-14 rounded-xl object-contain object-center p-0.5 bg-pink-50" />
                   <div className="flex-1">
                     <h4 className="font-bold text-[#23272A] line-clamp-1">{item.name}</h4>
                     <span className="text-[#718096]">Qty: {item.quantity}</span>

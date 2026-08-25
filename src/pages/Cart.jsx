@@ -60,7 +60,7 @@ export default function Cart() {
             <div className="bg-white rounded-3xl border border-[#FFE4EC] overflow-hidden divide-y divide-[#FFE4EC] shadow-sm">
               {cartItems.map((item, idx) => (
                 <div key={idx} className="p-6 flex flex-col sm:flex-row items-center gap-6">
-                  <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-2xl bg-pink-50" />
+                  <img src={item.image} alt={item.name} className="w-24 h-24 object-contain object-center p-1 rounded-2xl bg-pink-50" />
                   
                   <div className="flex-1 space-y-1 text-center sm:text-left">
                     <h3 className="font-heading text-base font-bold text-[#23272A]">{item.name}</h3>

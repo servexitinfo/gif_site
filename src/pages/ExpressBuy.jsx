@@ -296,8 +296,8 @@ export default function ExpressBuy() {
         {/* Left Column: Product Showcase & Details (6 Cols) */}
         <div className="lg:col-span-6 space-y-6">
           
-          <div className="relative aspect-4/3 rounded-3xl overflow-hidden bg-pink-50 border border-[#FFE4EC] shadow-xl">
-            <img src={targetProduct.image} alt={targetProduct.name} className="w-full h-full object-cover" />
+          <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-pink-50 border border-[#FFE4EC] shadow-xl flex items-center justify-center p-2">
+            <img src={targetProduct.image} alt={targetProduct.name} className="w-full h-full object-contain object-center" />
             
             <span className="absolute top-4 left-4 bg-emerald-500 text-white text-[11px] font-bold px-3.5 py-1.5 rounded-full uppercase shadow-md">
               In Stock & Ready To Dispatch

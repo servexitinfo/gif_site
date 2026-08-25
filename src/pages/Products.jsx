@@ -103,13 +103,13 @@ export default function Products() {
           {filteredProducts.map((p) => (
             <div key={p.id} className="gift-card p-5 flex flex-col justify-between group">
               <div>
-                <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-pink-50/60 mb-4 flex items-center justify-center p-2">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-pink-50/60 mb-4 flex items-center justify-center p-2">
                   <img
                     src={p.image}
                     alt={p.name}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
                   />
                   <button
                     onClick={() => toggleWishlist(p.id || p._id)}
@@ -163,13 +163,13 @@ export default function Products() {
         <div className="space-y-6">
           {filteredProducts.map((p) => (
             <div key={p.id} className="gift-card p-6 flex flex-col md:flex-row gap-6 items-center">
-              <div className="w-full md:w-56 aspect-4/3 rounded-2xl overflow-hidden bg-pink-50 flex-shrink-0">
+              <div className="w-full md:w-56 aspect-[3/4] rounded-2xl overflow-hidden bg-pink-50 flex-shrink-0 flex items-center justify-center p-2">
                 <img
                   src={p.image}
                   alt={p.name}
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain object-center"
                 />
               </div>
               <div className="flex-1 space-y-2">

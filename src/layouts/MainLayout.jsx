@@ -64,7 +64,7 @@ export default function MainLayout({ children }) {
                   ) : (
                     cartItems.map((item, idx) => (
                       <div key={idx} className="flex items-center gap-4 pb-4 border-b border-[#EAE4DC]/60">
-                        <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-md bg-[#F4F0E8]" />
+                        <img src={item.image} alt={item.name} className="w-20 h-20 object-contain object-center p-0.5 rounded-md bg-[#F4F0E8]" />
                         <div className="flex-1">
                           <h4 className="text-sm font-medium text-[#1C1B1F]">{item.name}</h4>
                           <p className="text-xs text-[#7A756D]">Size: {item.size} | Color: {item.color}</p>

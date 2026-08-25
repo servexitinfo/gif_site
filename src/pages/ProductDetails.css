@@ -2,7 +2,7 @@
 
 .details-hero-box {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
   background-color: #FFF5F7;
   border-radius: 1.25rem;
   overflow: hidden;
@@ -12,7 +12,7 @@
 
 @media (min-width: 640px) {
   .details-hero-box {
-    aspect-ratio: 5 / 4;
+    aspect-ratio: 1 / 1;
     border-radius: 1.5rem;
   }
 }

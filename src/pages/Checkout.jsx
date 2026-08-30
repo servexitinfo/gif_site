@@ -36,7 +36,7 @@ export default function Checkout() {
         landmark: savedUser.landmark || '',
         city: savedUser.city || '',
         district: savedUser.district || '',
-        state: savedUser.state || 'Kerala',
+        state: savedUser.state || 'Uttar Pradesh',
         postalCode: savedUser.pincode || '',
         addressType: savedUser.addressType || 'Home',
         giftNote: '',
@@ -56,7 +56,7 @@ export default function Checkout() {
         landmark: '',
         city: '',
         district: '',
-        state: 'Kerala',
+        state: 'Uttar Pradesh',
         postalCode: '',
         addressType: 'Home',
         giftNote: '',
@@ -468,7 +468,7 @@ export default function Checkout() {
                     required
                     type="text"
                     name="city"
-                    placeholder="e.g. Kochi"
+                    placeholder="e.g. Noida"
                     value={formData.city}
                     onChange={handleInputChange}
                     className="w-full bg-[#FFF8F9] border border-[#FFE4EC] rounded-xl p-3 text-xs focus:outline-none focus:border-[#FF5C8D]"
@@ -480,7 +480,7 @@ export default function Checkout() {
                     required
                     type="text"
                     name="district"
-                    placeholder="e.g. Ernakulam"
+                    placeholder="e.g. Gautam Buddha Nagar"
                     value={formData.district}
                     onChange={handleInputChange}
                     className="w-full bg-[#FFF8F9] border border-[#FFE4EC] rounded-xl p-3 text-xs focus:outline-none focus:border-[#FF5C8D]"
@@ -508,7 +508,7 @@ export default function Checkout() {
                     type="text"
                     name="postalCode"
                     maxLength={6}
-                    placeholder="e.g. 682001"
+                    placeholder="e.g. 201301"
                     value={formData.postalCode}
                     onChange={handleInputChange}
                     className="w-full bg-[#FFF8F9] border border-[#FFE4EC] rounded-xl p-3 text-xs focus:outline-none focus:border-[#FF5C8D]"

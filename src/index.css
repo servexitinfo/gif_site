@@ -67,11 +67,11 @@
 .btn-pink {
   background: linear-gradient(135deg, #FF5C8D 0%, #E84393 100%) !important;
   color: #FFFFFF !important;
-  padding: 12px 28px;
+  padding: 12px 20px;
   border-radius: 9999px;
   font-weight: 700;
   font-size: 0.85rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 24px -4px rgba(255, 92, 141, 0.45);
   border: none;
@@ -80,6 +80,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .btn-pink:hover {
@@ -96,7 +97,7 @@
   background: #FFF5F7 !important;
   color: #FF5C8D !important;
   border: 1.5px solid #FFD6E0 !important;
-  padding: 10px 24px;
+  padding: 10px 20px;
   border-radius: 9999px;
   font-weight: 700;
   font-size: 0.85rem;
@@ -106,6 +107,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .btn-outline-pink:hover {

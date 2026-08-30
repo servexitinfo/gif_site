@@ -199,49 +199,6 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          {/* Ribbon Color Swatches */}
-          <div className="space-y-2.5 pt-2">
-            <label className="text-xs font-bold text-[#23272A] flex items-center justify-between">
-              <span>Satin Ribbon Theme</span>
-              <span className="text-[#64748B] font-semibold">{selectedColor}</span>
-            </label>
-            <div className="flex items-center space-x-3">
-              {colors.map((c) => (
-                <button
-                  key={c.name}
-                  onClick={() => setSelectedColor(c.name)}
-                  style={{ backgroundColor: c.hex }}
-                  className={`w-8 h-8 rounded-full border-2 border-white shadow-md transition-all ${
-                    selectedColor === c.name
-                      ? 'ring-2 ring-offset-2 ring-[#FF5C8D] scale-110'
-                      : 'hover:scale-105'
-                  }`}
-                  title={c.name}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Size / Set Options */}
-          <div className="space-y-2.5 pt-2">
-            <label className="text-xs font-bold text-[#23272A]">Box Edition</label>
-            <div className="grid grid-cols-3 gap-2.5">
-              {sizes.map((sz) => (
-                <button
-                  key={sz}
-                  onClick={() => setSelectedSize(sz)}
-                  className={`py-3 px-3 rounded-2xl text-xs font-bold transition-all text-center border ${
-                    selectedSize === sz
-                      ? 'bg-[#FF5C8D] text-white border-[#FF5C8D] shadow-md'
-                      : 'bg-white text-[#23272A] border-[#FFE4EC] hover:border-[#FF5C8D]'
-                  }`}
-                >
-                  {sz}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Stock & Availability Indicator */}
           {(() => {
             const availableStock = product.stock !== undefined ? product.stock : 10;
@@ -266,50 +223,53 @@ export default function ProductDetails() {
                   )}
                 </div>
 
-                {/* Quantity & Add to Cart */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4">
-                  <div className="flex flex-col items-center">
-                    <div className="flex items-center justify-center border border-[#FFD6E0] bg-white rounded-full px-4 py-3 space-x-3 text-xs font-bold text-[#23272A]">
-                      <button
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        disabled={quantity <= 1 || isOutOfStock}
-                        className="text-[#64748B] hover:text-[#FF5C8D] px-1 font-bold disabled:opacity-40 cursor-pointer"
-                      >
-                        -
-                      </button>
-                      <span className="w-4 text-center">{quantity}</span>
-                      <button
-                        onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
-                        disabled={isMaxQuantity || isOutOfStock}
-                        className={`px-1 font-bold ${
-                          isMaxQuantity || isOutOfStock
-                            ? 'text-slate-300 cursor-not-allowed'
-                            : 'text-[#64748B] hover:text-[#FF5C8D] cursor-pointer'
-                        }`}
-                        title={isMaxQuantity ? `Max stock limit reached (${availableStock})` : 'Increase Quantity'}
-                      >
-                        +
-                      </button>
-                    </div>
+                {/* Quantity & Action Buttons */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-4">
+                  {/* Stepper */}
+                  <div className="flex items-center justify-between sm:justify-center border border-[#FFD6E0] bg-white rounded-full px-4 py-3 space-x-3 text-xs font-bold text-[#23272A] shadow-xs flex-shrink-0">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      disabled={quantity <= 1 || isOutOfStock}
+                      className="text-[#64748B] hover:text-[#FF5C8D] px-1 font-bold text-sm disabled:opacity-30 cursor-pointer"
+                      title="Decrease Quantity"
+                    >
+                      -
+                    </button>
+                    <span className="w-5 text-center font-extrabold text-xs text-[#23272A]">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
+                      disabled={isMaxQuantity || isOutOfStock}
+                      className={`px-1 font-bold text-sm ${
+                        isMaxQuantity || isOutOfStock
+                          ? 'text-slate-300 cursor-not-allowed'
+                          : 'text-[#64748B] hover:text-[#FF5C8D] cursor-pointer'
+                      }`}
+                      title={isMaxQuantity ? `Max stock limit reached (${availableStock})` : 'Increase Quantity'}
+                    >
+                      +
+                    </button>
                   </div>
 
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={isOutOfStock}
-                    className="flex-1 min-w-[120px] btn-outline-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span>{isOutOfStock ? 'Out of Stock' : 'Add to Bag'}</span>
-                    <FiShoppingBag className="w-4 h-4 flex-shrink-0" />
-                  </button>
+                  {/* Buttons */}
+                  <div className="flex-1 flex flex-col xs:flex-row items-stretch gap-2.5">
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={isOutOfStock}
+                      className="flex-1 btn-outline-pink py-3.5 px-5 text-xs font-bold flex items-center justify-center gap-2 rounded-full whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-xs hover:shadow-md transition-all"
+                    >
+                      <FiShoppingBag className="w-4 h-4 flex-shrink-0" />
+                      <span>{isOutOfStock ? 'Out of Stock' : 'Add to Bag'}</span>
+                    </button>
 
-                  <button
-                    onClick={() => !isOutOfStock && navigate(`/express-buy/${productId}`)}
-                    disabled={isOutOfStock}
-                    className="flex-1 min-w-[140px] btn-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold shadow-md whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <FiZap className="w-4 h-4 flex-shrink-0" />
-                    <span>1-Click Express Buy</span>
-                  </button>
+                    <button
+                      onClick={() => !isOutOfStock && navigate(`/express-buy/${productId}`)}
+                      disabled={isOutOfStock}
+                      className="flex-1 btn-pink py-3.5 px-5 text-xs font-bold flex items-center justify-center gap-2 rounded-full whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all"
+                    >
+                      <FiZap className="w-4 h-4 flex-shrink-0" />
+                      <span>1-Click Express Buy</span>
+                    </button>
+                  </div>
                 </div>
               </>
             );

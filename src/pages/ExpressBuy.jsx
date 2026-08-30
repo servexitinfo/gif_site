@@ -85,8 +85,8 @@ export default function ExpressBuy() {
   const [stateName, setStateName] = useState(() => {
     try {
       const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
-      return u.state || 'Kerala';
-    } catch { return 'Kerala'; }
+      return u.state || 'Uttar Pradesh';
+    } catch { return 'Uttar Pradesh'; }
   });
   const [pincode, setPincode] = useState(() => {
     try {
@@ -392,7 +392,7 @@ export default function ExpressBuy() {
                   type="text"
                   required
                   maxLength={6}
-                  placeholder="e.g. 682001"
+                  placeholder="e.g. 201301"
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value)}
                   className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3.5 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -407,7 +407,7 @@ export default function ExpressBuy() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Kochi"
+                  placeholder="e.g. Noida"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"
@@ -419,7 +419,7 @@ export default function ExpressBuy() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Ernakulam"
+                  placeholder="e.g. Gautam Buddha Nagar"
                   value={district}
                   onChange={(e) => setDistrict(e.target.value)}
                   className="w-full bg-pink-50/60 border border-[#FFD6E0] rounded-xl px-3 py-2.5 text-xs text-[#23272A] focus:outline-none focus:ring-2 focus:ring-[#FF5C8D]"

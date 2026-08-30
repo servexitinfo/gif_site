@@ -215,19 +215,86 @@ export const CartProvider = ({ children }) => {
     return newOrder;
   };
 
+  const getProductStock = (productId, providedStock) => {
+    if (typeof providedStock === 'number' && !isNaN(providedStock) && providedStock >= 0) {
+      return providedStock;
+    }
+    const found = products.find((p) => p.id === productId || p._id === productId);
+    if (found && typeof found.stock === 'number' && !isNaN(found.stock)) {
+      return found.stock;
+    }
+    return 10; // Default fallback stock limit
+  };
+
   const addToCart = (product) => {
+    const maxStock = getProductStock(product.id, product.stock);
+    const qtyToAdd = product.quantity || 1;
+
+    if (maxStock <= 0) {
+      showToast(`⚠️ "${product.name}" is currently out of stock!`);
+      return false;
+    }
+
+    let capped = false;
+
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id && item.size === product.size && item.color === product.color);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id && item.size === product.size && item.color === product.color
-            ? { ...item, quantity: item.quantity + product.quantity }
-            : item
+      const existingIndex = prev.findIndex(
+        (item) => item.id === product.id && item.size === product.size && item.color === product.color
+      );
+
+      if (existingIndex > -1) {
+        const currentQty = prev[existingIndex].quantity;
+        const targetQty = currentQty + qtyToAdd;
+
+        if (targetQty > maxStock) {
+          capped = true;
+          return prev.map((item, idx) =>
+            idx === existingIndex ? { ...item, quantity: maxStock, stock: maxStock } : item
+          );
+        }
+
+        return prev.map((item, idx) =>
+          idx === existingIndex ? { ...item, quantity: targetQty, stock: maxStock } : item
         );
       }
-      return [...prev, product];
+
+      const finalQty = Math.min(qtyToAdd, maxStock);
+      if (qtyToAdd > maxStock) capped = true;
+
+      return [...prev, { ...product, quantity: finalQty, stock: maxStock }];
     });
-    showToast(`Added ${product.name} to cart`);
+
+    if (capped) {
+      showToast(`⚠️ Maximum stock limit reached (${maxStock} items available).`);
+    } else {
+      showToast(`Added ${product.name} to cart`);
+    }
+
+    return true;
+  };
+
+  const updateQuantity = (itemId, newQuantity) => {
+    setCartItems((prev) => {
+      const targetItem = prev.find((item) => item.id === itemId);
+      if (!targetItem) return prev;
+
+      if (newQuantity <= 0) {
+        return prev.filter((item) => item.id !== itemId);
+      }
+
+      const maxStock = getProductStock(targetItem.id, targetItem.stock);
+
+      if (newQuantity > maxStock) {
+        showToast(`⚠️ Cannot exceed stock limit (${maxStock} items available).`);
+        return prev.map((item) =>
+          item.id === itemId ? { ...item, quantity: maxStock, stock: maxStock } : item
+        );
+      }
+
+      return prev.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity, stock: maxStock } : item
+      );
+    });
   };
 
   const removeFromCart = (id) => {
@@ -260,12 +327,14 @@ export const CartProvider = ({ children }) => {
       value={{
         products,
         getProductById,
+        getProductStock,
         addProduct,
         updateProduct,
         deleteProduct,
         refreshProducts,
         cartItems,
         addToCart,
+        updateQuantity,
         removeFromCart,
         clearCart,
         orders,

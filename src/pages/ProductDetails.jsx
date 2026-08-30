@@ -242,40 +242,78 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          {/* Quantity & Add to Cart */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4">
-            <div className="flex items-center justify-center border border-[#FFD6E0] bg-white rounded-full px-4 py-3 space-x-3 text-xs font-bold text-[#23272A]">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="text-[#64748B] hover:text-[#FF5C8D] px-1 font-bold"
-              >
-                -
-              </button>
-              <span className="w-4 text-center">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="text-[#64748B] hover:text-[#FF5C8D] px-1 font-bold"
-              >
-                +
-              </button>
-            </div>
+          {/* Stock & Availability Indicator */}
+          {(() => {
+            const availableStock = product.stock !== undefined ? product.stock : 10;
+            const isOutOfStock = availableStock <= 0;
+            const isMaxQuantity = quantity >= availableStock;
 
-            <button
-              onClick={handleAddToCart}
-              className="flex-1 min-w-[120px] btn-outline-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold whitespace-nowrap cursor-pointer"
-            >
-              <span>Add to Bag</span>
-              <FiShoppingBag className="w-4 h-4 flex-shrink-0" />
-            </button>
+            return (
+              <>
+                <div className="flex items-center gap-2 pt-2">
+                  {isOutOfStock ? (
+                    <span className="text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full border border-red-200">
+                      Out of Stock
+                    </span>
+                  ) : availableStock <= 5 ? (
+                    <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                      🔥 Low Stock: Only {availableStock} left in stock!
+                    </span>
+                  ) : (
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                      ✓ In Stock ({availableStock} available)
+                    </span>
+                  )}
+                </div>
 
-            <button
-              onClick={() => navigate(`/express-buy/${productId}`)}
-              className="flex-1 min-w-[140px] btn-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold shadow-md whitespace-nowrap cursor-pointer"
-            >
-              <FiZap className="w-4 h-4 flex-shrink-0" />
-              <span>1-Click Express Buy</span>
-            </button>
-          </div>
+                {/* Quantity & Add to Cart */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4">
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center border border-[#FFD6E0] bg-white rounded-full px-4 py-3 space-x-3 text-xs font-bold text-[#23272A]">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        disabled={quantity <= 1 || isOutOfStock}
+                        className="text-[#64748B] hover:text-[#FF5C8D] px-1 font-bold disabled:opacity-40 cursor-pointer"
+                      >
+                        -
+                      </button>
+                      <span className="w-4 text-center">{quantity}</span>
+                      <button
+                        onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
+                        disabled={isMaxQuantity || isOutOfStock}
+                        className={`px-1 font-bold ${
+                          isMaxQuantity || isOutOfStock
+                            ? 'text-slate-300 cursor-not-allowed'
+                            : 'text-[#64748B] hover:text-[#FF5C8D] cursor-pointer'
+                        }`}
+                        title={isMaxQuantity ? `Max stock limit reached (${availableStock})` : 'Increase Quantity'}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={isOutOfStock}
+                    className="flex-1 min-w-[120px] btn-outline-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span>{isOutOfStock ? 'Out of Stock' : 'Add to Bag'}</span>
+                    <FiShoppingBag className="w-4 h-4 flex-shrink-0" />
+                  </button>
+
+                  <button
+                    onClick={() => !isOutOfStock && navigate(`/express-buy/${productId}`)}
+                    disabled={isOutOfStock}
+                    className="flex-1 min-w-[140px] btn-pink py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 font-bold shadow-md whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <FiZap className="w-4 h-4 flex-shrink-0" />
+                    <span>1-Click Express Buy</span>
+                  </button>
+                </div>
+              </>
+            );
+          })()}
 
           {/* Guarantees */}
           <div className="border-t border-[#FFE4EC] pt-5 space-y-3 text-xs text-[#64748B]">

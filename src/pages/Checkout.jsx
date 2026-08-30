@@ -288,15 +288,35 @@ export default function Checkout() {
     );
   }
 
+  const isLoggedIn = (() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('gift_site_user') || '{}');
+      return !!(u && u.email);
+    } catch {
+      return false;
+    }
+  })();
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-      <div className="mb-8">
-        <span className="text-xs font-bold text-[#FF5C8D] uppercase tracking-widest bg-pink-50 px-3 py-1 rounded-full">
-          Secure Gift Delivery
-        </span>
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-[#23272A] mt-2">
-          Express Checkout & Payment
-        </h1>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span className="text-xs font-bold text-[#FF5C8D] uppercase tracking-widest bg-pink-50 px-3 py-1 rounded-full inline-flex items-center gap-1">
+            <FiZap className="w-3.5 h-3.5" /> Guest Checkout (No Login Required)
+          </span>
+          <h1 className="font-heading text-3xl sm:text-4xl font-bold text-[#23272A] mt-2">
+            Express Checkout & Payment
+          </h1>
+        </div>
+
+        {!isLoggedIn && (
+          <div className="bg-pink-50/80 border border-[#FFD6E0] p-3 rounded-2xl flex items-center gap-3 text-xs">
+            <span className="text-[#64748B]">Already have an account?</span>
+            <Link to="/login" className="font-bold text-[#FF5C8D] hover:underline whitespace-nowrap">
+              Sign In to Pre-fill Saved Address →
+            </Link>
+          </div>
+        )}
       </div>
 
       {cartItems.length === 0 ? (

@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
 import Footer from '../components/footer/Footer';
 import { useCart } from '../context/CartContext';
-import { FiX, FiTrash2, FiShoppingBag } from 'react-icons/fi';
+import { FiX, FiTrash2, FiShoppingBag, FiLock, FiZap } from 'react-icons/fi';
 import './MainLayout.css';
 
 export default function MainLayout({ children }) {
@@ -87,15 +88,22 @@ export default function MainLayout({ children }) {
 
               {/* Subtotal & Checkout */}
               {cartItems.length > 0 && (
-                <div className="pt-6 border-t border-[#EAE4DC] space-y-4">
+                <div className="pt-6 border-t border-[#EAE4DC] space-y-3">
                   <div className="flex justify-between text-sm font-medium text-[#1C1B1F]">
                     <span>Subtotal</span>
                     <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
                   </div>
                   <p className="text-[11px] text-[#7A756D]">Shipping, taxes, and discounts calculated at checkout.</p>
-                  <button className="w-full bg-[#1C1B1F] text-white py-3.5 rounded-full font-medium text-xs uppercase tracking-wider hover:bg-[#333138] transition-colors shadow-sm">
-                    Proceed to Checkout
-                  </button>
+                  <Link
+                    to="/checkout"
+                    onClick={() => setIsCartOpen(false)}
+                    className="w-full btn-pink py-3.5 text-center block font-bold text-xs uppercase tracking-wider shadow-md"
+                  >
+                    Proceed to Checkout (No Login Required) <FiLock className="inline w-4 h-4 ml-1" />
+                  </Link>
+                  <p className="text-[10px] text-center text-[#FF5C8D] font-bold flex items-center justify-center gap-1">
+                    <FiZap className="w-3.5 h-3.5" /> Fast Guest Checkout • No Registration Needed
+                  </p>
                 </div>
               )}
             </div>

@@ -190,14 +190,25 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-6 text-center border-t border-[#FFE4EC] pt-5">
+          <div className="mt-6 border-t border-[#FFE4EC] pt-5 space-y-3">
             <Link
               to="/register"
-              className="auth-secondary-btn"
+              className="auth-secondary-btn w-full justify-center"
             >
               <span>Don't have an account? Sign Up Here</span>
               <FiArrowRight className="w-3.5 h-3.5" />
             </Link>
+
+            <div className="p-4 rounded-2xl bg-[#FFF5F7] border border-[#FFD6E0] text-center space-y-2">
+              <p className="text-xs font-bold text-[#23272A]">Want to complete purchase quickly?</p>
+              <p className="text-[11px] text-[#64748B]">You can skip signing in and check out directly as a guest.</p>
+              <Link
+                to="/checkout"
+                className="w-full btn-outline-pink py-2.5 px-4 text-xs font-bold justify-center block"
+              >
+                Proceed to Checkout as Guest (No Login) <FiArrowRight className="inline w-3.5 h-3.5 ml-1" />
+              </Link>
+            </div>
           </div>
 
         </div>

@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import './Cart.css';
 
 export default function Cart() {
-  const { cartItems, removeFromCart, updateQuantity } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, getProductStock } = useCart();
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shippingThreshold = 100;
@@ -58,46 +58,64 @@ export default function Cart() {
             </div>
 
             <div className="bg-white rounded-3xl border border-[#FFE4EC] overflow-hidden divide-y divide-[#FFE4EC] shadow-sm">
-              {cartItems.map((item, idx) => (
-                <div key={idx} className="p-6 flex flex-col sm:flex-row items-center gap-6">
-                  <img src={item.image} alt={item.name} className="w-24 h-24 object-contain object-center p-1 rounded-2xl bg-pink-50" />
-                  
-                  <div className="flex-1 space-y-1 text-center sm:text-left">
-                    <h3 className="font-heading text-base font-bold text-[#23272A]">{item.name}</h3>
-                    <p className="text-xs text-[#64748B]">Edition: {item.size} | Ribbon: {item.color}</p>
-                    <span className="text-xs font-bold text-[#FF5C8D]">₹{item.price}.00 each</span>
-                  </div>
+              {cartItems.map((item, idx) => {
+                const maxStock = getProductStock ? getProductStock(item.id, item.stock) : (item.stock || 10);
+                const isMaxStockReached = item.quantity >= maxStock;
 
-                  {/* Quantity Stepper */}
-                  <div className="flex items-center border border-[#FFD6E0] rounded-full px-3 py-1 bg-pink-50">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="p-1 text-[#64748B] hover:text-[#FF5C8D]"
-                    >
-                      <FiMinus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="px-3 text-xs font-bold text-[#23272A]">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="p-1 text-[#64748B] hover:text-[#FF5C8D]"
-                    >
-                      <FiPlus className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                return (
+                  <div key={idx} className="p-6 flex flex-col sm:flex-row items-center gap-6">
+                    <img src={item.image} alt={item.name} className="w-24 h-24 object-contain object-center p-1 rounded-2xl bg-pink-50" />
+                    
+                    <div className="flex-1 space-y-1 text-center sm:text-left">
+                      <h3 className="font-heading text-base font-bold text-[#23272A]">{item.name}</h3>
+                      <p className="text-xs text-[#64748B]">Edition: {item.size} | Ribbon: {item.color}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-[#FF5C8D]">₹{item.price}.00 each</span>
+                        <span className="text-[10px] text-[#64748B] font-semibold bg-slate-100 px-2 py-0.5 rounded-full">
+                          {maxStock} in stock
+                        </span>
+                      </div>
+                    </div>
 
-                  {/* Total & Remove */}
-                  <div className="flex items-center gap-4">
-                    <span className="text-base font-bold text-[#FF5C8D]">₹{(item.price * item.quantity).toLocaleString()}.00</span>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-[#94A3B8] hover:text-red-500 transition-colors p-2"
-                      title="Remove Item"
-                    >
-                      <FiTrash2 className="w-5 h-5" />
-                    </button>
+                    {/* Quantity Stepper */}
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex items-center border border-[#FFD6E0] rounded-full px-3 py-1 bg-pink-50">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="p-1 text-[#64748B] hover:text-[#FF5C8D] cursor-pointer"
+                          title="Decrease Quantity"
+                        >
+                          <FiMinus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="px-3 text-xs font-bold text-[#23272A]">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          disabled={isMaxStockReached}
+                          className={`p-1 ${isMaxStockReached ? 'text-slate-300 cursor-not-allowed' : 'text-[#64748B] hover:text-[#FF5C8D] cursor-pointer'}`}
+                          title={isMaxStockReached ? `Maximum stock limit reached (${maxStock} items available)` : 'Increase Quantity'}
+                        >
+                          <FiPlus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      {isMaxStockReached && (
+                        <span className="text-[10px] font-bold text-amber-600">Max stock ({maxStock})</span>
+                      )}
+                    </div>
+
+                    {/* Total & Remove */}
+                    <div className="flex items-center gap-4">
+                      <span className="text-base font-bold text-[#FF5C8D]">₹{(item.price * item.quantity).toLocaleString()}.00</span>
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        className="text-[#94A3B8] hover:text-red-500 transition-colors p-2"
+                        title="Remove Item"
+                      >
+                        <FiTrash2 className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -123,10 +141,16 @@ export default function Cart() {
               <span className="text-[#FF5C8D]">₹{grandTotal.toLocaleString()}.00</span>
             </div>
 
-            <div>
-              <Link to="/checkout" className="w-full btn-pink py-4 text-center block">
-                Proceed to Checkout <FiLock className="inline w-4 h-4 ml-1" />
+            <div className="space-y-3 pt-2">
+              <Link to="/checkout" className="w-full btn-pink py-4 text-center block font-bold text-sm shadow-md hover:shadow-lg transition-all">
+                Proceed to Checkout as Guest <FiLock className="inline w-4 h-4 ml-1" />
               </Link>
+              <div className="p-3 bg-pink-50 rounded-2xl border border-[#FFD6E0] text-[11px] text-[#64748B] text-center space-y-1">
+                <span className="font-bold text-[#FF5C8D] flex items-center justify-center gap-1">
+                  ⚡ No Login Required
+                </span>
+                <p>Complete your purchase instantly as a guest without creating an account.</p>
+              </div>
             </div>
           </div>
 
